@@ -1,0 +1,43 @@
+{
+  "compilerOptions": {
+    "target": "ES5",
+    "baseUrl": ".",
+    "allowJs": true,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "types": ["vite/client"],
+    "outDir": "./dist/",
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "noFallthroughCasesInSwitch": true,
+    "module": "CommonJS",
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "preserve",
+    "paths": {
+      "@/components/*": [
+        "src/components/*"
+      ],
+      "@/constants/*": [
+        "src/constants/*"
+      ],
+      "@/types/*": [
+        "src/types/*"
+      ]
+    },
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
+    "noEmit": false,
+    "incremental": true
+  },
+  "include": ["src/**/*.ts", "src/**/*.tsx", "src/server.ts"  ],
+  "exclude": [
+    "node_modules",
+    "dist"
+  ]
+}

@@ -2,6 +2,12 @@
 *.class
 target
 
+# production
+build
+dist
+
+node_modules
+
 # Log file
 *.log
 

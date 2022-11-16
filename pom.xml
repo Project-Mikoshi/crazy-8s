@@ -17,6 +17,8 @@
     <maven.compiler.target>17</maven.compiler.target>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <java.version>17</java.version>
+    <node.version>v16.10.0</node.version>
+    <npm.version>7.24.0</npm.version>
   </properties>
 
   <dependencies>
@@ -25,6 +27,18 @@
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-web</artifactId>
       <version>2.7.5</version>
+    </dependency>
+
+    <dependency>
+      <groupId>io.socket</groupId>
+      <artifactId>socket.io-server</artifactId>
+      <version>4.0.1</version>
+    </dependency>
+
+    <dependency>
+      <groupId>com.github.eirslett</groupId>
+      <artifactId>frontend-maven-plugin</artifactId>
+      <version>1.12.1</version>
     </dependency>
 
     <!-- Utils -->
@@ -91,14 +105,7 @@
       <plugin>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-maven-plugin</artifactId>
-        <configuration>
-          <excludes>
-            <exclude>
-              <groupId>org.projectlombok</groupId>
-              <artifactId>lombok</artifactId>
-            </exclude>
-          </excludes>
-        </configuration>
+        <version>2.7.5</version>
       </plugin>
 
       <plugin>
@@ -106,6 +113,48 @@
         <artifactId>maven-surefire-plugin</artifactId>
         <version>3.0.0-M7</version>
       </plugin>
+
+      <plugin>
+        <groupId>com.github.eirslett</groupId>
+        <artifactId>frontend-maven-plugin</artifactId>
+        <version>1.12.1</version>
+        <configuration>
+           <workingDirectory>src/main/frontend</workingDirectory>
+           <installDirectory>target</installDirectory>
+        </configuration>
+        <executions>
+           <execution>
+              <id>install node and npm</id>
+              <goals>
+                 <goal>install-node-and-npm</goal>
+              </goals>
+              <configuration>
+                <nodeVersion>${node.version}</nodeVersion>
+                <npmVersion>${npm.version}</npmVersion>
+              </configuration>
+           </execution>
+           <execution>
+              <id>install depdencies</id>
+              <goals>
+                 <goal>npm</goal>
+              </goals>
+              <configuration>
+                 <arguments>install</arguments>
+              </configuration>
+              <phase>generate-resources</phase>
+           </execution>
+           <execution>
+              <id>bundle ui package</id>
+              <goals>
+                 <goal>npm</goal>
+              </goals>
+              <configuration>
+                 <arguments>run build</arguments>
+              </configuration>
+              <phase>compile</phase>
+           </execution>
+        </executions>
+     </plugin>
 
     </plugins>
   </build>
