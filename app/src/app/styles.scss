@@ -1,0 +1,61 @@
+html,
+body,
+#__next {
+  height: 100%;
+  width: 100%;
+  margin: 0;
+}
+
+.app {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+  background: aliceblue;
+  color: #414141;
+
+  a {
+    text-decoration: none;
+    color: aliceblue;
+  }
+
+  .typewriter {
+    width: max-content;
+    position: relative;
+    $typewriterSpeed: 2s;
+    $typewriterCharacters: 39;
+  
+    &::before,
+    &::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+    }
+  
+    &::before {
+      background-color: aliceblue;
+      animation: typewriter $typewriterSpeed steps($typewriterCharacters) 1s forwards;
+    }
+  
+    &::after {
+      background-color: #414141;
+      width: .125em;
+      animation: typewriter $typewriterSpeed steps($typewriterCharacters) 1s forwards, blink 750ms steps($typewriterCharacters) infinite;
+    }
+
+    @keyframes typewriter {
+      to {
+        left: 100%;
+      }
+    }
+    
+    @keyframes blink {
+      to {
+        background: transparent;
+      }
+    }
+  }
+}
