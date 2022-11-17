@@ -29,6 +29,7 @@
     "typescript": "^4.8.4",
     "vite": "^3.2.4",
     "vite-plugin-svgr": "^2.2.2",
-    "vite-tsconfig-paths": "^3.5.2"
+    "vite-tsconfig-paths": "^3.5.2",
+    "socket.io-client": "^2.3.1"
   }
 }
