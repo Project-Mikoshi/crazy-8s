@@ -27,7 +27,7 @@ export default function DeckDisplay (props: DeckDisplayProps) {
       <br />
       <Stack direction='row'>
         {deck.map((card, index) => (
-          <CardDisplay key={index} card={card} />
+          <CardDisplay key={index} card={card} isSelected={index === 0} />
         ))}
       </Stack>
     </Container>

@@ -21,6 +21,7 @@ export default function MessageBox (props: MessageBoxProps) {
 
   return (
     <Container>
+      <Typography variant='h4'>Server Messages</Typography>
       <Stack direction='column'>
         {messages.map((message, index) => (
           <Typography key={index}>{message}</Typography>

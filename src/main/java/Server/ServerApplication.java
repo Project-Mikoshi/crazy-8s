@@ -32,6 +32,7 @@ public class ServerApplication {
     // very hacky
     config.setPort(port + 1);
     config.setSocketConfig(socketConfig);
+    config.setRandomSession(true);
 
     return new SocketIOServer(config);
   }

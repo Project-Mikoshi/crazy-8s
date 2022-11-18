@@ -10,7 +10,7 @@ public class GameTest {
 
   @BeforeEach
   public void beforeAll () {
-    game = new Game();
+    game = new Game(null);
   }
 
   @Test

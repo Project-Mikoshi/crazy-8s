@@ -3,15 +3,19 @@ import { Container } from '@mui/material'
 import { Card, CardSuit, CardValue } from '@/types/card'
 
 interface CardDisplayProps {
-  card: Card
+  card: Card,
+  isSelected: boolean
 }
 
 export default function CardDisplay (props: CardDisplayProps) {
   // == Props ================================
-  const { card } = props
-  const { color, suit, value } = card
+  const { card, isSelected = false } = props
 
   // == States ===============================
+
+  // == Computed Props =======================
+  const { color, suit, value } = card
+  const fillOpacity = isSelected ? 0.9 : 0.65
 
   // == Lifecycle ============================
 
@@ -125,11 +129,10 @@ export default function CardDisplay (props: CardDisplayProps) {
   // == Template =============================
   return (
     <Container>
-      <svg viewBox="0 0 200 250">
+      <svg className='card-display-svg' viewBox="0 0 200 250" fillOpacity={fillOpacity}>
         <g>
           <path
             fill='aliceblue'
-            fillOpacity={0.85}
             d="M 199,10 C 199,5 195,1 190,1 L 10,1 C 5,1 1,5 1,10 L 1,240 C 1,245 5,249 10,249 L 190,249 C 195,249 199,245 199,240 L 199,10 z "
           />
 

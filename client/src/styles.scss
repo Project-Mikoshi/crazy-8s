@@ -16,6 +16,14 @@ body,
   }
 }
 
+.card-display-svg {
+  cursor: pointer;
+
+  &:hover {
+    fill-opacity: 0.8;
+  }
+}
+
 .typewriter {
   width: max-content;
   position: relative;

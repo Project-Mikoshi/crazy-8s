@@ -1,5 +1,5 @@
 
-import acceptance.AcceptanceTestSuite;
+import acceptance.CucumberTest;
 import unit.UnitTestSuite;
 import org.junit.platform.launcher.core.LauncherDiscoveryRequestBuilder;
 import org.junit.platform.launcher.Launcher;
@@ -15,7 +15,7 @@ import java.util.List;
 public class TestRunner {
   public static void main(String[] args) {
     LauncherDiscoveryRequest request = LauncherDiscoveryRequestBuilder.request()
-                                                                      .selectors(selectClass(AcceptanceTestSuite.class))
+                                                                      .selectors(selectClass(CucumberTest.class))
                                                                       .selectors(selectClass(UnitTestSuite.class))
                                                                       .build();
 

@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from 'react'
 // @ts-expect-error
 import io from 'socket.io-client'
-import { Button, Grid, Paper, TextField, Typography } from '@mui/material'
+import { Button, Grid, LinearProgress, Paper, TextField, Typography } from '@mui/material'
 import { SOCKET_SERVER_ADDRESS } from '@/constants/network'
 import { SocketEvent } from '@/types/api'
-import { Card, CardColor, CardSuit, CardValue } from '@/types/card'
+import { Card } from '@/types/card'
 import { GameState } from '@/types/game'
 import MessageBox from '@/components/MessageBox'
 import DeckDisplay from '@/components/DeckDisplay'
-import './App.scss'
+import './styles.scss'
 
 export default function App () {
   // == Props ================================
@@ -28,8 +28,7 @@ export default function App () {
   useEffect(() => {
     if (!socket) {
       setSocket(io(SOCKET_SERVER_ADDRESS,  {
-        transports: ['websocket'],
-        forceNew: true
+        transports: ['websocket']
       }))
     }
 
@@ -40,65 +39,83 @@ export default function App () {
 
   // == Functions ============================
   function startConnection () {
-    socket.on(SocketEvent.CONNECTION, function () {
+    socket.on(SocketEvent.CONNECTION, () => {
       setConnected(true)
     })
 
     socket.on(SocketEvent.MESSAGE, (message: string) => {
-      setServerMessages([...serverMessages, message])
+      serverMessages.push(message)
+      setServerMessages(serverMessages)
     })
 
-    socket.on(SocketEvent.JOIN_GAME, () => {
+    socket.on(SocketEvent.GAME_JOIN, () => {
       setGameState(GameState.READY)
-
-      setPlayerDeck([
-        {
-          value: CardValue.A,
-          color: CardColor.RED,
-          suit: CardSuit.SPADES
-        },
-        {
-          value: CardValue.TEN,
-          color: CardColor.BLACK,
-          suit: CardSuit.HEARTS
-        },
-        {
-          value: CardValue.NINE,
-          color: CardColor.RED,
-          suit: CardSuit.DIAMONDS
-        },
-        {
-          value: CardValue.JACK,
-          color: CardColor.BLACK,
-          suit: CardSuit.CLUBS
-        }
-      ])
     })
 
-    socket.on(SocketEvent.DISCONNECT, function () {
+    socket.on(SocketEvent.GAME_START, () => {
+      setGameState(GameState.STARTED)
+    })
+
+    socket.on(SocketEvent.GAME_DEAL_CARDS, (cards: Array<Card>) => {
+      setPlayerDeck(cards)
+    })
+
+    socket.on(SocketEvent.DISCONNECT, () => {
       setConnected(false)
     })
   }
 
   // == Actions ==============================
   function sendJoinGameRequest () {
-    socket.emit(SocketEvent.JOIN_GAME, playerName)
+    socket.emit(SocketEvent.GAME_JOIN, playerName)
   }
 
   // == Template =============================
+  function ServerErrorMessage () {
+    return (
+      <>
+        <Grid item md={10} textAlign='center'>
+          <Typography variant='h3'>Error: unable to connect to server</Typography>
+        </Grid>
+      </>
+    )
+  }
+
+  function GameWaitingRoom () {
+    return (
+      <>
+        <Grid item md={12}>
+          <Typography variant='h6'>Waiting for more players to join</Typography>
+          <LinearProgress />
+        </Grid>
+        <Grid item md={2}>
+          <MessageBox messages={serverMessages} />
+        </Grid>
+      </>
+    )
+  }
+
+  function GameWindow () {
+    return (
+      <>
+        <Grid item md={8}>
+          {/* game box */}
+        </Grid>
+        <Grid item md={4}>
+          <MessageBox messages={serverMessages} />
+        </Grid>
+        <Grid item md={12}>
+          <DeckDisplay deck={playerDeck} />
+        </Grid>
+      </>
+    )
+  }
 
   return (
     <div className='app'>
       <div className='outlet'>
         <Grid container justifyContent='center' alignItems='center' height='100%' width='100%' padding={5}>
-          {!isConnected && (
-            <>
-              <Grid item md={10} textAlign='center'>
-                <Typography variant='h3'>Error: unable to connect to server</Typography>
-              </Grid>
-            </>
-          )}
-
+          {!isConnected && <ServerErrorMessage />}
           {isConnected && gameState === GameState.WAITING && (
             <>
               <Grid item md={10}>
@@ -106,34 +123,25 @@ export default function App () {
               </Grid>
 
               <Grid item md={6}>
-                <Paper sx={{ backgroundColor: 'aliceblue' }}>
+                <Paper>
                   <TextField
-                    value={playerName}
-                    placeholder='Enter your name'
+                    id='player-name-input-box'
                     fullWidth
+                    placeholder='Enter your name'
+                    value={playerName}
                     onChange={(e) => setPlayerName(e.target.value)}
                   />
                 </Paper>
               </Grid>
 
               <Grid item md={10} textAlign='center'>
-                <Button variant='contained' onClick={sendJoinGameRequest} disabled={!playerName}>Join Game</Button>
+                <Button id='join-button' variant='contained' onClick={sendJoinGameRequest} disabled={!playerName}>Join Game</Button>
               </Grid>
             </>
           )}
 
-          {isConnected && gameState === GameState.READY && (
-            <>
-              <Grid item md={10}>
-              </Grid>
-              <Grid item md={2}>
-                <MessageBox messages={serverMessages} />
-              </Grid>
-              <Grid item md={12}>
-                <DeckDisplay deck={playerDeck} />
-              </Grid>
-            </>
-          )}
+          {isConnected && gameState === GameState.READY && <GameWaitingRoom />}
+          {isConnected && gameState === GameState.STARTED && <GameWindow />}
         </Grid>
       </div>
     </div>

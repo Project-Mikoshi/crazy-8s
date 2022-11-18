@@ -3,5 +3,7 @@ export enum SocketEvent {
   CONNECTION = 'connection',
   MESSAGE = 'message',
   DISCONNECT = 'disconnect',
-  JOIN_GAME = 'join'
+  GAME_JOIN = 'game-join',
+  GAME_START = 'game-start',
+  GAME_DEAL_CARDS = 'game-deal-cards'
 }

@@ -8,7 +8,11 @@ import constant.CardValue;
 import game.Card;
 
 public class GameConfig {
-  public static final int NUM_OF_PLAYERS = 3;
+  public static final int NUM_OF_PLAYERS = 1;
+
+  public static final int NUM_OF_INITIAL_CARDS = 5;
+
+  public static final String GAME_ROOM = "crazy 8s";
 
   public static final String[] CARD_SUITS = {
     CardSuit.CLUBS,
