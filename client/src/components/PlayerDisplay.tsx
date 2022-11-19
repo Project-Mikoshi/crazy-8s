@@ -4,12 +4,12 @@ import CardDisplay from './CardDisplay'
 import { Card } from '@/types/card'
 
 interface DeckDisplayProps {
-  deck: Array<Card>
+  cards: Array<Card>
 }
 
-export default function DeckDisplay (props: DeckDisplayProps) {
+export default function (props: DeckDisplayProps) {
   // == Props ================================
-  const { deck } = props
+  const { cards } = props
 
   // == States ===============================
 
@@ -26,7 +26,7 @@ export default function DeckDisplay (props: DeckDisplayProps) {
       <Typography variant='h5'>Your Cards</Typography>
       <br />
       <Stack direction='row'>
-        {deck.map((card, index) => (
+        {cards.map((card, index) => (
           <CardDisplay key={index} card={card} isSelected={index === 0} />
         ))}
       </Stack>

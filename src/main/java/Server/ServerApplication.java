@@ -29,8 +29,7 @@ public class ServerApplication {
     
     Configuration config = new Configuration();
     config.setHostname(host);
-    // very hacky
-    config.setPort(port + 1);
+    config.setPort(8081);
     config.setSocketConfig(socketConfig);
     config.setRandomSession(true);
 

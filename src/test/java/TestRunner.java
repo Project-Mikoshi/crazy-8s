@@ -25,7 +25,7 @@ public class TestRunner {
     launcher.registerTestExecutionListeners(listener);
     launcher.execute(request);
 
-    
+
     PrintWriter pWriter = new PrintWriter(System.out);
     TestExecutionSummary summary = listener.getSummary();
 
@@ -34,5 +34,7 @@ public class TestRunner {
     List<Failure> failures = summary.getFailures();
     System.out.println("getTestsSucceededCount() - " + summary.getTestsSucceededCount());
     failures.forEach(failure -> System.out.println("failure - " + failure.getException()));
+
+    System.out.println("!!!!!!!!!!!!!!");
   }
 }

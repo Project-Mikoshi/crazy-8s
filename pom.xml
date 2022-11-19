@@ -13,40 +13,63 @@
   <description>Web Based Game for Crazy 8s</description>
 
   <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <maven.compiler.source>17</maven.compiler.source>
     <maven.compiler.target>17</maven.compiler.target>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <maven.surefire.version>3.0.0-M7</maven.surefire.version>
+    <maven.resources.version>3.3.0</maven.resources.version>
+    <spring-boot.maven.version>2.7.5</spring-boot.maven.version>
+    <netty-socketio.version>1.7.22</netty-socketio.version>
+    <spring-boot-starter.web.version>2.7.5</spring-boot-starter.web.version>
+    <spring-boot-starter.actuator.version>2.7.3</spring-boot-starter.actuator.version>
+    <spring-boot-starter.test.version>2.7.5</spring-boot-starter.test.version>
     <java.version>17</java.version>
     <node.version>v16.10.0</node.version>
     <npm.version>7.24.0</npm.version>
+    <selenium.version>4.1.4</selenium.version>
+    <webdrivermanager.version>5.2.0</webdrivermanager.version>
+    <junit.jupiter.version>5.9.0</junit.jupiter.version>
+    <junit.platform.version>1.9.0</junit.platform.version>
+    <lombok.version>1.18.24</lombok.version>
+    <cucumber.version>7.3.4</cucumber.version>
+    <cucumber.spring.version>6.11.0</cucumber.spring.version>
+    <cucumber-junit-platform-engine.version>7.3.4</cucumber-junit-platform-engine.version>
+    <frontend-maven-plugin.version>1.12.1</frontend-maven-plugin.version>
     <client-src-dir>${project.basedir}/client</client-src-dir>
   </properties>
 
   <dependencies>
+
     <!-- Base setup -->
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-web</artifactId>
-      <version>2.7.5</version>
+      <version>${spring-boot-starter.web.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-actuator</artifactId>
+      <version>${spring-boot-starter.actuator.version}</version>
     </dependency>
 
     <dependency>
       <groupId>com.corundumstudio.socketio</groupId>
       <artifactId>netty-socketio</artifactId>
-      <version>1.7.22</version>
+      <version>${netty-socketio.version}</version>
   </dependency>
 
     <dependency>
       <groupId>com.github.eirslett</groupId>
       <artifactId>frontend-maven-plugin</artifactId>
-      <version>1.12.1</version>
+      <version>${frontend-maven-plugin.version}</version>
     </dependency>
 
     <!-- Utils -->
     <dependency>
       <groupId>org.projectlombok</groupId>
       <artifactId>lombok</artifactId>
-      <version>1.18.24</version>
+      <version>${lombok.version}</version>
       <scope>provided</scope>
     </dependency>
 
@@ -54,54 +77,54 @@
     <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter</artifactId>
-      <version>5.9.0</version>
+      <version>${junit.jupiter.version}</version>
       <scope>test</scope>
     </dependency>
 
     <dependency>
       <groupId>org.junit.platform</groupId>
       <artifactId>junit-platform-suite</artifactId>
-      <version>1.9.0</version>
+      <version>${junit.platform.version}</version>
       <scope>test</scope>
     </dependency>
 
     <dependency>
       <groupId>io.cucumber</groupId>
       <artifactId>cucumber-java</artifactId>
-      <version>7.3.4</version>
+      <version>${cucumber.version}</version>
       <scope>test</scope>
     </dependency>
 
     <dependency>
       <groupId>io.cucumber</groupId>
       <artifactId>cucumber-spring</artifactId>
-      <version>6.11.0</version>
+      <version>${cucumber.spring.version}</version>
       <scope>test</scope>
     </dependency>
 
     <dependency>
       <groupId>io.cucumber</groupId>
       <artifactId>cucumber-junit-platform-engine</artifactId>
-      <version>7.3.4</version>
+      <version>${cucumber-junit-platform-engine.version}</version>
       <scope>test</scope>
     </dependency>
 
     <dependency>
       <groupId>org.seleniumhq.selenium</groupId>
       <artifactId>selenium-java</artifactId>
-      <version>4.1.4</version>
+      <version>${selenium.version}</version>
     </dependency>
   
     <dependency>
       <groupId>io.github.bonigarcia</groupId>
       <artifactId>webdrivermanager</artifactId>
-      <version>5.2.0</version>
+      <version>${webdrivermanager.version}</version>
     </dependency>
 
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-test</artifactId>
-      <version>2.7.5</version>
+      <version>${spring-boot-starter.test.version}</version>
       <scope>test</scope>
     </dependency>
 
@@ -113,7 +136,7 @@
       <plugin>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-maven-plugin</artifactId>
-        <version>2.7.5</version>
+        <version>${spring-boot.maven.version}</version>
         <configuration>
           <excludes>
               <exclude>
@@ -127,7 +150,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
-        <version>3.0.0-M7</version>
+        <version>${maven.surefire.version}</version>
         <configuration>
           <excludes>
             <exclude>**/CucumberTest.java</exclude>
@@ -138,7 +161,7 @@
       <plugin>
         <groupId>com.github.eirslett</groupId>
         <artifactId>frontend-maven-plugin</artifactId>
-        <version>1.12.1</version>
+        <version>${frontend-maven-plugin.version}</version>
         <configuration>
            <workingDirectory>${client-src-dir}</workingDirectory>
            <installDirectory>${project.build.directory}</installDirectory>
@@ -179,7 +202,7 @@
 
      <plugin>
       <artifactId>maven-resources-plugin</artifactId>
-      <version>3.3.0</version>
+      <version>${maven.resources.version}</version>
       <executions>
           <execution>
               <id>position-react-build</id>

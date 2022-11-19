@@ -5,7 +5,7 @@ interface MessageBoxProps {
   messages: Array<String>
 }
 
-export default function MessageBox (props: MessageBoxProps) {
+export default function (props: MessageBoxProps) {
   // == Props ================================
   const { messages } = props
 

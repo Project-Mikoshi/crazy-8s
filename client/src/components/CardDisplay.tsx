@@ -7,7 +7,7 @@ interface CardDisplayProps {
   isSelected: boolean
 }
 
-export default function CardDisplay (props: CardDisplayProps) {
+export default function (props: CardDisplayProps) {
   // == Props ================================
   const { card, isSelected = false } = props
 

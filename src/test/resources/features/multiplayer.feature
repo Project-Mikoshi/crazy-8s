@@ -6,4 +6,3 @@ Feature: multiplayer
     Then the join button exists
     Then game ended
 
-

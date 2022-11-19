@@ -7,7 +7,7 @@ import { SocketEvent } from '@/types/api'
 import { Card } from '@/types/card'
 import { GameState } from '@/types/game'
 import MessageBox from '@/components/MessageBox'
-import DeckDisplay from '@/components/DeckDisplay'
+import PlayerDisplay from '@/components/PlayerDisplay'
 import './styles.scss'
 
 export default function App () {
@@ -22,7 +22,7 @@ export default function App () {
   const [serverMessages, setServerMessages] = useState<Array<string>>([])
 
   const [playerName, setPlayerName] = useState('')
-  const [playerDeck, setPlayerDeck] = useState<Array<Card>>([])
+  const [playerCards, setPlayerCards] = useState<Array<Card>>([])
 
   // == Lifecycle ===========================
   useEffect(() => {
@@ -57,7 +57,7 @@ export default function App () {
     })
 
     socket.on(SocketEvent.GAME_DEAL_CARDS, (cards: Array<Card>) => {
-      setPlayerDeck(cards)
+      setPlayerCards(cards)
     })
 
     socket.on(SocketEvent.DISCONNECT, () => {
@@ -105,7 +105,7 @@ export default function App () {
           <MessageBox messages={serverMessages} />
         </Grid>
         <Grid item md={12}>
-          <DeckDisplay deck={playerDeck} />
+          <PlayerDisplay cards={playerCards} />
         </Grid>
       </>
     )

@@ -4,7 +4,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Stack;
 import java.util.UUID;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import com.corundumstudio.socketio.SocketIOServer;
 import config.GameConfig;
 import constant.CardValue;
@@ -15,6 +16,8 @@ import lombok.Setter;
 @Getter
 @Setter
 public class Game {
+  private static final Logger log = LoggerFactory.getLogger(Game.class);
+
   // == Props ================================
   SocketIOServer server;
   Player winner;
@@ -43,6 +46,7 @@ public class Game {
   }
 
   public void start () {
+    log.info("Game has started");
     server.getRoomOperations(GameConfig.GAME_ROOM).sendEvent(SocketEvent.MESSAGE, "Game started");
     server.getRoomOperations(GameConfig.GAME_ROOM).sendEvent(SocketEvent.GAME_START);
 
@@ -70,6 +74,7 @@ public class Game {
         }
       }};
 
+      player.setCardsHeld(cards);
       server.getClient(id).sendEvent(SocketEvent.MESSAGE, "Your initial cards have been dealt");
       server.getClient(id).sendEvent(SocketEvent.GAME_DEAL_CARDS, cards);
     });

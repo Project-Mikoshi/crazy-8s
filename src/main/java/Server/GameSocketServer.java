@@ -20,7 +20,7 @@ public class GameSocketServer {
   private final SocketIOServer server;
 
   // == Props ================================
-  private Game game;
+  public Game game;
 
   // == Constructor ==========================
   @Autowired
@@ -41,13 +41,12 @@ public class GameSocketServer {
       client.joinRoom(GameConfig.GAME_ROOM);
       client.sendEvent(SocketEvent.GAME_JOIN);
       server.getRoomOperations(GameConfig.GAME_ROOM).sendEvent(SocketEvent.MESSAGE, "Player - '%s' has joined in the room".formatted(playerName));
-
+      
       game.addPlayer(client.getSessionId(), playerName);
-      game.start();
 
-      // if (game.isReadyToStart()) {
-      //   game.start();
-      // }
+      if (game.isReadyToStart()) {
+        game.start();
+      }
     };
   }
 
