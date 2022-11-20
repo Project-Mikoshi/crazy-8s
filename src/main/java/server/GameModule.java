@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import com.corundumstudio.socketio.SocketIOServer;
 import config.GameConfig;
+import constant.CardValue;
 import constant.SocketEvent;
 import lombok.Getter;
 import lombok.Setter;
@@ -27,6 +28,7 @@ public class GameModule {
   Player winner;
   HashMap<UUID, Player> players;
   Stack<Card> deck;
+  Stack<Card> discardPile;
 
   // == Constructor ==========================
   @Autowired
@@ -35,6 +37,7 @@ public class GameModule {
     players = new HashMap<>();
     winner = null;
     deck = Util.shuffleAndBuildCardsStack();
+    discardPile = new Stack<>();
   }
 
   // == Public Method ========================
@@ -56,6 +59,7 @@ public class GameModule {
     server.getRoomOperations(GameConfig.GAME_ROOM).sendEvent(SocketEvent.GAME_START);
 
     dealCardsToPlayer();
+    drawFirstCardForDiscardPle();
   }
 
   // == Private Method =======================
@@ -71,6 +75,23 @@ public class GameModule {
       server.getClient(id).sendEvent(SocketEvent.MESSAGE, "Your initial cards have been dealt");
       server.getClient(id).sendEvent(SocketEvent.GAME_DEAL_CARDS, cards);
     });
+  }
+
+  private void drawFirstCardForDiscardPle () {
+    Card card = drawCardFromDeck();
+
+    while (card.getValue().equals(CardValue.EIGHT)) {
+      int insertIndex = (int) Math.floor(Math.random() * deck.size());
+      deck.add(insertIndex, card);
+
+      card = drawCardFromDeck();
+    }
+
+    discardPile.add(card);
+    log.info("First card to start the game - {}", card);
+
+    server.getRoomOperations(GameConfig.GAME_ROOM).sendEvent(SocketEvent.GAME_UPDATE_DISCARD_PILE, discardPile.peek());
+    server.getRoomOperations(GameConfig.GAME_ROOM).sendEvent(SocketEvent.GAME_UPDATE_REMAINING_DECK, deck.size());
   }
 
   private Card drawCardFromDeck () {
