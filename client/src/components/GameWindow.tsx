@@ -116,7 +116,7 @@ export default function (props: GameWindowProps) {
       return (
         <>
           <Grid item md={8}>
-            <DeckDisplay topCardOnDiscardPile={topDiscardedCard!} remainingDeckCount={remainingDeckCount} />
+            <DeckDisplay topCardOnDiscardPile={topDiscardedCard} remainingDeckCount={remainingDeckCount} />
           </Grid>
           <Grid item md={4}>
             <ServerMessageBox messages={serverMessages} />

@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import com.corundumstudio.socketio.SocketIOServer;
+import com.corundumstudio.socketio.listener.DataListener;
 import config.GameConfig;
 import constant.CardValue;
 import constant.SocketEvent;
@@ -38,6 +39,10 @@ public class GameModule {
     winner = null;
     deck = Util.shuffleAndBuildCardsStack();
     discardPile = new Stack<>();
+
+    if (this.server != null) {
+      server.addEventListener(SocketEvent.GAME_DISCARD_CARD, Card.class, playerDiscardCard());
+    }
   }
 
   // == Public Method ========================
@@ -87,7 +92,7 @@ public class GameModule {
       card = drawCardFromDeck();
     }
 
-    discardPile.add(card);
+    discardPile.push(card);
     log.info("First card to start the game - {}", card);
 
     server.getRoomOperations(GameConfig.GAME_ROOM).sendEvent(SocketEvent.GAME_UPDATE_DISCARD_PILE, discardPile.peek());
@@ -105,4 +110,23 @@ public class GameModule {
   }
 
   // == Event Handler ========================
+  private DataListener<Card> playerDiscardCard () {
+    return (client, cardToDiscard, ackSender) -> {
+      UUID playerId = client.getSessionId();
+      Player player = players.get(playerId);
+
+      if (player != null) {
+        log.info("receive card to discard {}", cardToDiscard);
+
+        player.getCardsHeld().remove(cardToDiscard);
+        client.sendEvent(SocketEvent.MESSAGE, "You have discarded a %s".formatted(cardToDiscard));
+        client.sendEvent(SocketEvent.GAME_UPDATE_CARDS, player.getCardsHeld());
+
+        discardPile.push(cardToDiscard);
+        server.getBroadcastOperations().sendEvent(SocketEvent.GAME_UPDATE_DISCARD_PILE, cardToDiscard);
+        server.getBroadcastOperations().sendEvent(SocketEvent.GAME_UPDATE_REMAINING_DECK, deck.size());
+      }
+    };
+  }
+
 }

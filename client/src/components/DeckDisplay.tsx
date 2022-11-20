@@ -5,7 +5,7 @@ import { Card } from '@/types/card'
 
 interface DeckDisplayProps {
   remainingDeckCount: number,
-  topCardOnDiscardPile: Card
+  topCardOnDiscardPile?: Card
 }
 
 export default function (props: DeckDisplayProps) {
@@ -28,7 +28,9 @@ export default function (props: DeckDisplayProps) {
       </Grid>
 
       <Grid item xs={8}>
-        <CardDisplay card={topCardOnDiscardPile} disabled />
+        {topCardOnDiscardPile && (
+          <CardDisplay card={topCardOnDiscardPile} disabled />
+        )}
       </Grid>
 
     </Grid>
