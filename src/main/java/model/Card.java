@@ -1,8 +1,12 @@
-package game;
+package model;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class Card {
   // == Props ================================
   String suit;
@@ -10,13 +14,12 @@ public class Card {
   String color;
 
   // == Constructor ==========================
-  public Card (String suit, String value, String color) {
-    this.suit = suit;
-    this.value = value;
-    this.color = color;
-  }
 
   // == Public Method ========================
+  @Override
+  public String toString () {
+    return "%s %s %s".formatted(color, suit, value);
+  }
 
   // == Private Method =======================
 }

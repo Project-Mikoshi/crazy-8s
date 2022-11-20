@@ -1,15 +1,13 @@
 import React from 'react'
 import { Container, Stack, Typography } from '@mui/material'
-import CardDisplay from './CardDisplay'
-import { Card } from '@/types/card'
 
-interface DeckDisplayProps {
-  cards: Array<Card>
+interface MessageBoxProps {
+  messages: Array<String>
 }
 
-export default function (props: DeckDisplayProps) {
+export default function (props: MessageBoxProps) {
   // == Props ================================
-  const { cards } = props
+  const { messages } = props
 
   // == States ===============================
 
@@ -20,14 +18,12 @@ export default function (props: DeckDisplayProps) {
   // == Actions ==============================
 
   // == Template =============================
-
   return (
     <Container>
-      <Typography variant='h5'>Your Cards</Typography>
-      <br />
-      <Stack direction='row'>
-        {cards.map((card, index) => (
-          <CardDisplay key={index} card={card} isSelected={index === 0} />
+      <Typography variant='h4'>Server Messages</Typography>
+      <Stack direction='column'>
+        {messages.map((message, index) => (
+          <Typography variant='body1' key={index}>{message}</Typography>
         ))}
       </Stack>
     </Container>

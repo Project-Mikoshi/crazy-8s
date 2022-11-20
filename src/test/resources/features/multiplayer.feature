@@ -3,6 +3,6 @@ Feature: multiplayer
     Given game started
 
   Scenario: 1
-    Then the join button exists
+    When play joins the game
     Then game ended
 

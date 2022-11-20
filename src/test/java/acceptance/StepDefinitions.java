@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Assertions;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
@@ -14,19 +15,23 @@ import io.cucumber.java.Before;
 import io.cucumber.java.en.*;
 import io.cucumber.spring.CucumberContextConfiguration;
 import io.github.bonigarcia.wdm.WebDriverManager;
+import server.GameModule;
 import server.ServerApplication;
 
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 @ContextConfiguration(classes = ServerApplication.class)
 @CucumberContextConfiguration
 public class StepDefinitions {
-  WebDriver driver;
-
   private static final String HOST_NAME = "http://127.0.0.1";
 
-  @LocalServerPort
-  private int port;
+  // == Props ================================
+  WebDriver driver;
 
+  @Autowired GameModule game;
+
+  @LocalServerPort int port;
+
+  // == Hooks ================================
   @Before
   public void setup () {
     driver = WebDriverManager.chromedriver().create();
@@ -40,18 +45,18 @@ public class StepDefinitions {
   }
 
   // == Step Defs - When =====================
-
-  // == Step Defs - And ======================
-
-  // == Step Defs - Then =====================
-  @Then("the join button exists")
+  @When("play joins the game")
   public void join () {
     WebElement nameInput = driver.findElement(By.id("player-name-input-box"));
     nameInput.sendKeys("player1");
     WebElement joinButton = driver.findElement(By.id("join-button"));
     Assertions.assertNotNull(joinButton);
+    joinButton.click();
   }
 
+  // == Step Defs - And ======================
+
+  // == Step Defs - Then =====================
   @Then("game ended")
   public void teardown () {
     driver.quit();

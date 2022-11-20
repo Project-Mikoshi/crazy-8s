@@ -151,11 +151,6 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
         <version>${maven.surefire.version}</version>
-        <configuration>
-          <excludes>
-            <exclude>**/CucumberTest.java</exclude>
-          </excludes>
-        </configuration>
       </plugin>
 
       <plugin>
@@ -178,7 +173,7 @@
               </configuration>
            </execution>
            <execution>
-              <id>install depdencies</id>
+              <id>install dependencies</id>
               <goals>
                  <goal>npm</goal>
               </goals>
@@ -209,7 +204,7 @@
               <goals>
                   <goal>copy-resources</goal>
               </goals>
-              <phase>prepare-package</phase>
+              <phase>process-resources</phase>
               <configuration>
                   <outputDirectory>${project.build.outputDirectory}/static</outputDirectory>
                   <resources>

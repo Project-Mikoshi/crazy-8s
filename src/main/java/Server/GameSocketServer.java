@@ -7,7 +7,6 @@ import com.corundumstudio.socketio.listener.DisconnectListener;
 
 import config.GameConfig;
 import constant.SocketEvent;
-import game.Game;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +19,7 @@ public class GameSocketServer {
   private final SocketIOServer server;
 
   // == Props ================================
-  public Game game;
+  @Autowired GameModule game;
 
   // == Constructor ==========================
   @Autowired
@@ -30,8 +29,6 @@ public class GameSocketServer {
     this.server.addDisconnectListener(onDisconnected());
     this.server.addEventListener(SocketEvent.GAME_JOIN, String.class, onJoiningGameRoom());
     log.info("socket io event handler registered");
-
-    this.game = new Game(server);
   }
 
   // == Event Handler ========================
