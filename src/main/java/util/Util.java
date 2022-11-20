@@ -1,7 +1,6 @@
 package util;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Stack;
@@ -17,15 +16,12 @@ public class Util {
     }};
   }
 
+  @SuppressWarnings("null")
   public static int calculateScore (ArrayList<Card> cards) {
-    return Arrays.asList(GameConfig.CARD_VALUES).stream().reduce(0, (subTotal, value) -> {
-      int count = (int) cards.stream().filter(card -> card.getValue().equalsIgnoreCase(value)).count();
+    return cards.stream().reduce(0, (subTotal, card) -> {
+      int points = GameConfig.POINTS_BY_CARD_VALUE.get(card.getValue());
 
-      int pointsPerCard = GameConfig.POINTS_BY_CARD_VALUE.get(value);
-
-      subTotal += count * pointsPerCard;
-
-      return subTotal;
+      return subTotal + points;
     }, Integer::sum);
   }
 }

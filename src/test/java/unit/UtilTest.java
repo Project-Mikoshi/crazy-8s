@@ -26,5 +26,21 @@ public class UtilTest {
       add(new Card(CardSuit.CLUBS, CardValue.A, CardColor.RED));
       add(new Card(CardSuit.CLUBS, CardValue.A, CardColor.RED));
     }}));
+
+    Assertions.assertEquals(6, Util.calculateScore(new ArrayList<>(){{
+      add(new Card(CardSuit.CLUBS, CardValue.TWO, CardColor.RED));
+      add(new Card(CardSuit.CLUBS, CardValue.A, CardColor.RED));
+      add(new Card(CardSuit.CLUBS, CardValue.A, CardColor.RED));
+      add(new Card(CardSuit.CLUBS, CardValue.A, CardColor.RED));
+      add(new Card(CardSuit.CLUBS, CardValue.A, CardColor.RED));
+    }}));
+
+    Assertions.assertEquals(54, Util.calculateScore(new ArrayList<>(){{
+      add(new Card(CardSuit.CLUBS, CardValue.A, CardColor.RED));
+      add(new Card(CardSuit.CLUBS, CardValue.A, CardColor.RED));
+      add(new Card(CardSuit.CLUBS, CardValue.A, CardColor.RED));
+      add(new Card(CardSuit.CLUBS, CardValue.A, CardColor.RED));
+      add(new Card(CardSuit.CLUBS, CardValue.EIGHT, CardColor.RED));
+    }}));
   }
 }
