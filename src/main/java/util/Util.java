@@ -16,7 +16,12 @@ public class Util {
     }};
   }
 
+  @SuppressWarnings("null")
   public static int calculateScore (ArrayList<Card> cards) {
-    return 0;
+    return cards.stream().reduce(0, (subTotal, card) -> {
+      int points = GameConfig.POINTS_BY_CARD_VALUE.get(card.getValue());
+
+      return subTotal + points;
+    }, Integer::sum);
   }
 }
