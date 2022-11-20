@@ -32,7 +32,7 @@ export default function (props: PlayerDisplayProps) {
         <Typography variant='h4'>{playerName}</Typography>
       </Grid>
 
-      <Grid item xs={10}>
+      <Grid item xs={10} container sx={{ overflowX: 'auto', overflowY: 'hidden' }}>
         <Stack direction='row'>
           {cards.map((card, index) => (
             <CardDisplay key={index} card={card} id={index} onSelect={onSelect}/>
@@ -42,8 +42,8 @@ export default function (props: PlayerDisplayProps) {
 
       <Grid item xs= {2} container alignItems='center'>
         <Fab variant='extended' color='primary'>
-          <HandIcon sx={{ mr: 1 }} />
-          <Typography>Draw Card</Typography>
+          <HandIcon sx={{ mr: 2 }} />
+          <Typography>Draw</Typography>
         </Fab>
       </Grid>
     </Grid>

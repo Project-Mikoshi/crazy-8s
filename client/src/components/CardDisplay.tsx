@@ -1,5 +1,5 @@
 import React from 'react'
-import { Container } from '@mui/material'
+import { Box } from '@mui/material'
 import { Card, CardSuit, CardValue } from '@/types/card'
 
 interface CardDisplayProps {
@@ -135,7 +135,7 @@ export default function (props: CardDisplayProps) {
 
   // == Template =============================
   return (
-    <Container sx={{ height: '200px' }}>
+    <Box sx={{ height: '200px', width: '250px' }}>
       <svg className={`card-display-svg ${disabled ? 'disabled' : ''}`} viewBox='0 0 200 250' fillOpacity={fillOpacity} role='button' onClick={handleClick}>
         <g>
           <path
@@ -154,6 +154,6 @@ export default function (props: CardDisplayProps) {
 
         </g>
       </svg>
-    </Container>
+    </Box>
   )
 }
