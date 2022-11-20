@@ -4,6 +4,7 @@ import io from 'socket.io-client'
 import { Grid, Typography } from '@mui/material'
 import { SOCKET_SERVER_ADDRESS } from '@/constants/network'
 import { SocketEvent } from '@/types/api'
+import GameWindow from '@/components/GameWindow'
 import './styles.scss'
 
 export default function App () {
@@ -51,6 +52,7 @@ export default function App () {
               </Grid>
             </>
           )}
+          {isConnected && <GameWindow socket={socket}/>}
         </Grid>
       </div>
     </div>
