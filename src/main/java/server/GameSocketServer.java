@@ -38,6 +38,12 @@ public class GameSocketServer {
       client.joinRoom(GameConfig.GAME_ROOM);
       client.sendEvent(SocketEvent.GAME_JOIN);
       server.getRoomOperations(GameConfig.GAME_ROOM).sendEvent(SocketEvent.MESSAGE, "Player - '%s' has joined in the room".formatted(playerName));
+      
+      game.addPlayer(client.getSessionId(), playerName);
+
+      if (game.isReadyToStart()) {
+        game.start();
+      }
     };
   }
 
@@ -51,6 +57,7 @@ public class GameSocketServer {
   private DisconnectListener onDisconnected () {
     return client -> {
       log.info("Client[{}] - Disconnected from socket", client.getSessionId().toString());
+      game.removePlayer(client.getSessionId());
       client.sendEvent(SocketEvent.DISCONNECT);
     };
   }
