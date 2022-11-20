@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from 'react'
 import { Grid, LinearProgress, Typography, Button, TextField, Paper } from '@mui/material'
 import ServerMessageBox from '@/components/ServerMessageBox'
+import PlayerActionDisplay from '@/components/PlayerActionDisplay'
+import DeckDisplay from '@/components/DeckDisplay'
+import { Card } from '@/types/card'
 import { GameState } from '@/types/game'
 import { SocketEvent } from '@/types/api'
 
@@ -13,8 +16,11 @@ export default function (props: GameWindowProps) {
   const { socket } = props
 
   // == States ===============================
+  const [remainingDeckCount, setRemainingDeckCount] = useState(0)
+  const [topDiscardedCard, setTopDiscardedCard] = useState<Card>()
   const [gameState, setGameState] = useState<GameState>(GameState.READY_TO_JOIN)
   const [playerName, setPlayerName] = useState('')
+  const [playerCards, setPlayerCards] = useState<Array<Card>>([])
   const [serverMessages, setServerMessages] = useState<Array<string>>([])
 
   // == Lifecycle ============================
@@ -31,6 +37,22 @@ export default function (props: GameWindowProps) {
     socket.on(SocketEvent.GAME_START, () => {
       setGameState(GameState.STARTED)
     })
+
+    socket.on(SocketEvent.GAME_DEAL_CARDS, (cards: Array<Card>) => {
+      setPlayerCards(cards)
+    })
+
+    socket.on(SocketEvent.GAME_UPDATE_CARDS, (cards: Array<Card>) => {
+      setPlayerCards(cards)
+    }),
+
+    socket.on(SocketEvent.GAME_UPDATE_DISCARD_PILE, (card: Card) => {
+      setTopDiscardedCard(card)
+    })
+
+    socket.on(SocketEvent.GAME_UPDATE_REMAINING_DECK, (count: number) => {
+      setRemainingDeckCount(count)
+    })
   }, [])
 
   // == Functions ============================
@@ -42,6 +64,10 @@ export default function (props: GameWindowProps) {
 
   function updatePlayerName (e: React.ChangeEvent<HTMLInputElement>) {
     setPlayerName(e.target.value)
+  }
+
+  function discardCard (card: Card) {
+    socket.emit(SocketEvent.GAME_DISCARD_CARD, card)
   }
 
   // == Template =============================
@@ -86,9 +112,18 @@ export default function (props: GameWindowProps) {
       )
     }
 
-    default: {
+    case (GameState.STARTED): {
       return (
         <>
+          <Grid item md={8}>
+            <DeckDisplay topCardOnDiscardPile={topDiscardedCard!} remainingDeckCount={remainingDeckCount} />
+          </Grid>
+          <Grid item md={4}>
+            <ServerMessageBox messages={serverMessages} />
+          </Grid>
+          <Grid item md={12}>
+            <PlayerActionDisplay cards={playerCards} playerName={playerName} onDiscardCard={discardCard} />
+          </Grid>
         </>
       )
     }
