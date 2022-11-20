@@ -1,6 +1,8 @@
 package acceptance;
 
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
@@ -29,7 +31,11 @@ public class StepDefinitions {
   // == Hooks ================================
   @Before
   public void setup () {
-    driver = WebDriverManager.chromedriver().create();
+    WebDriverManager.chromedriver().setup();
+    ChromeOptions options = new ChromeOptions();
+    options.setHeadless(true);
+    options.addArguments("window-size=1920,1080");
+    driver = new ChromeDriver(options);
   }
   // == Step Defs - Given ====================
   @Given("game started")
