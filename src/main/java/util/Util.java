@@ -1,5 +1,6 @@
 package util;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Stack;
@@ -13,5 +14,9 @@ public class Util {
       Collections.shuffle(cards);
       addAll(cards);
     }};
+  }
+
+  public static int calculateScore (ArrayList<Card> cards) {
+    return 0;
   }
 }
