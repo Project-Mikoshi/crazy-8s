@@ -1,6 +1,8 @@
 package server;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Stack;
 import java.util.UUID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,6 +14,7 @@ import constant.SocketEvent;
 import lombok.Getter;
 import lombok.Setter;
 import model.*;
+import util.Util;
 
 @Getter
 @Setter
@@ -21,12 +24,17 @@ public class GameModule {
 
   // == Props ================================
   SocketIOServer server;
+  Player winner;
   HashMap<UUID, Player> players;
+  Stack<Card> deck;
 
   // == Constructor ==========================
   @Autowired
   public GameModule (SocketIOServer server) {
     this.server = server;
+    players = new HashMap<>();
+    winner = null;
+    deck = Util.shuffleAndBuildCardsStack();
   }
 
   // == Public Method ========================
@@ -46,5 +54,34 @@ public class GameModule {
     log.info("Game has started");
     server.getRoomOperations(GameConfig.GAME_ROOM).sendEvent(SocketEvent.MESSAGE, "Game started");
     server.getRoomOperations(GameConfig.GAME_ROOM).sendEvent(SocketEvent.GAME_START);
+
+    dealCardsToPlayer();
   }
+
+  // == Private Method =======================
+  private void dealCardsToPlayer () {
+    players.forEach((id, player) -> {
+      ArrayList<Card> cards = new ArrayList<>(){{
+        for (int i = 0; i < GameConfig.NUM_OF_INITIAL_CARDS; i ++) {
+          add(drawCardFromDeck());
+        }
+      }};
+
+      player.setCardsHeld(cards);
+      server.getClient(id).sendEvent(SocketEvent.MESSAGE, "Your initial cards have been dealt");
+      server.getClient(id).sendEvent(SocketEvent.GAME_DEAL_CARDS, cards);
+    });
+  }
+
+  private Card drawCardFromDeck () {
+    if (deck.isEmpty()) {
+      log.info("No card left in the deck, round will end");
+
+      return null;
+    }
+
+    return deck.pop();
+  }
+
+  // == Event Handler ========================
 }
