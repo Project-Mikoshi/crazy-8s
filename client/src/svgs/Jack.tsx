@@ -38,7 +38,6 @@ export default function (props: { color: string }) {
         <use xlinkHref="#C" height="75" width="75" transform="translate(504,844)scale(1,0.972)rotate(0)translate(-37,-37)"/>
         <use xlinkHref="#C" height="75" width="75" transform="translate(826,643)scale(1,0.972)rotate(0)translate(-37,-37)"/>
       </symbol>
-      <rect width="239" height="335" x="-119.5" y="-167.5" rx="12" ry="12" fill="white" stroke="black"/>
       <use width="164.8" height="260.8" x="-82.4" y="-130.4" xlinkHref="#CJ1"/>
       <use transform="rotate(180)" width="164.8" height="260.8" x="-82.4" y="-130.4" xlinkHref="#CJ1"/>
       <use width="164.8" height="260.8" x="-82.4" y="-130.4" xlinkHref="#CJ2"/>
