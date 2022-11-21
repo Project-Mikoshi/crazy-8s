@@ -97,6 +97,7 @@ public class GameModule {
 
     server.getRoomOperations(GameConfig.GAME_ROOM).sendEvent(SocketEvent.GAME_UPDATE_DISCARD_PILE, discardPile.peek());
     server.getRoomOperations(GameConfig.GAME_ROOM).sendEvent(SocketEvent.GAME_UPDATE_REMAINING_DECK, deck.size());
+    updateCardsOnPlayersHand();
   }
 
   private Card drawCardFromDeck () {
@@ -107,6 +108,16 @@ public class GameModule {
     }
 
     return deck.pop();
+  }
+
+  private void updateCardsOnPlayersHand () {
+    players.forEach((id, player) -> {
+      player.getCardsHeld().forEach(card -> {
+        card.setIsPlayable(GameUtil.doesTwoCardsMatch(card, discardPile.peek()));
+      });
+
+      server.getClient(id).sendEvent(SocketEvent.GAME_UPDATE_CARDS, player.getCardsHeld());
+    });
   }
 
   // == Event Handler ========================
@@ -125,6 +136,7 @@ public class GameModule {
         discardPile.push(cardToDiscard);
         server.getBroadcastOperations().sendEvent(SocketEvent.GAME_UPDATE_DISCARD_PILE, cardToDiscard);
         server.getBroadcastOperations().sendEvent(SocketEvent.GAME_UPDATE_REMAINING_DECK, deck.size());
+        updateCardsOnPlayersHand();
       }
     };
   }
