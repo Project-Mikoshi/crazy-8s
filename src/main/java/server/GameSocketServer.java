@@ -41,8 +41,8 @@ public class GameSocketServer {
       
       game.addPlayer(client.getSessionId(), playerName);
 
-      if (game.isReadyToStart()) {
-        game.start();
+      if (game.haveEnoughPlayers()) {
+        game.beginNewRound();
       }
     };
   }

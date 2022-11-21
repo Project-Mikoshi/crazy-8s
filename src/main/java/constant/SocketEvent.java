@@ -11,4 +11,6 @@ public class SocketEvent {
   public static final String GAME_UPDATE_CARDS = "game-update-cards";
   public static final String GAME_UPDATE_DISCARD_PILE = "game-update-discard-pile";
   public static final String GAME_UPDATE_REMAINING_DECK = "game-update-remaining-deck";
+  public static final String GAME_START_PLAYER_TURN = "game-start-player-turn";
+  public static final String GAME_END_PLAYER_TURN = "game-end-player-turn";
 }

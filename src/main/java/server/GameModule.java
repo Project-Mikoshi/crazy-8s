@@ -28,6 +28,9 @@ public class GameModule {
   SocketIOServer server;
   Player winner;
   HashMap<UUID, Player> players;
+  ArrayList<UUID> playerOrder;
+  UUID currentPlayer;
+  boolean orderReversed;
   Stack<Card> deck;
   Stack<Card> discardPile;
 
@@ -37,8 +40,11 @@ public class GameModule {
     this.server = server;
     players = new HashMap<>();
     winner = null;
+    currentPlayer = null;
     deck = GameUtil.shuffleAndBuildCardsStack();
     discardPile = new Stack<>();
+    playerOrder = new ArrayList<>();
+    orderReversed = false;
 
     if (this.server != null) {
       server.addEventListener(SocketEvent.GAME_DISCARD_CARD, Card.class, playerDiscardCard());
@@ -48,23 +54,30 @@ public class GameModule {
   // == Public Method ========================
   public void addPlayer (UUID id, String name) {
     players.putIfAbsent(id, new Player(id, name));
+    playerOrder.add(id);
   }
 
   public void removePlayer (UUID id) {
     players.remove(id);
+    playerOrder.remove(id);
   }
 
-  public boolean isReadyToStart () {
+  public boolean haveEnoughPlayers () {
     return players.size() == GameConfig.NUM_OF_PLAYERS;
   }
 
-  public void start () {
+  public void beginNewRound () {
     log.info("Game has started");
     server.getRoomOperations(GameConfig.GAME_ROOM).sendEvent(SocketEvent.MESSAGE, "Game started");
     server.getRoomOperations(GameConfig.GAME_ROOM).sendEvent(SocketEvent.GAME_START);
 
     dealCardsToPlayer();
     drawFirstCardForDiscardPle();
+
+    currentPlayer = playerOrder.get(0);
+    orderReversed = false;
+
+    promptPlayerToStart();
   }
 
   // == Private Method =======================
@@ -120,6 +133,40 @@ public class GameModule {
     });
   }
 
+  private void promptPlayerToStart () {
+    Player player = players.get(currentPlayer);
+    server.getClient(currentPlayer).sendEvent(SocketEvent.GAME_START_PLAYER_TURN);
+    server.getRoomOperations(GameConfig.GAME_ROOM).sendEvent(SocketEvent.MESSAGE, "%s is playing".formatted(player.getName()));
+  }
+
+  private void endPlayerTurn () {
+    Player player = players.get(currentPlayer);
+    server.getClient(currentPlayer).sendEvent(SocketEvent.GAME_END_PLAYER_TURN);
+    server.getRoomOperations(GameConfig.GAME_ROOM).sendEvent(SocketEvent.MESSAGE, "%s has finished playing".formatted(player.getName()));
+
+    if (discardPile.peek().getValue().equals(CardValue.A)) {
+      orderReversed = !orderReversed;
+    }
+
+    if (discardPile.peek().getValue().equals(CardValue.QUEEN)) {
+      moveToNextPlayer();
+      server.getClient(currentPlayer).sendEvent(SocketEvent.MESSAGE, "Your turn has been skipped due to the action of previous player");
+    }
+
+    moveToNextPlayer();
+    promptPlayerToStart();
+  }
+
+  private void moveToNextPlayer () {
+    int currentPlayerIndex = playerOrder.indexOf(currentPlayer);
+
+    if (orderReversed) {
+      currentPlayer = currentPlayerIndex - 1 >= 0 ? playerOrder.get(currentPlayerIndex - 1) : playerOrder.get(playerOrder.size() - 1);
+    } else {
+      currentPlayer = currentPlayerIndex + 1 < playerOrder.size() ?  playerOrder.get(currentPlayerIndex + 1) : playerOrder.get(0);
+    }
+  }
+
   // == Event Handler ========================
   private DataListener<Card> playerDiscardCard () {
     return (client, cardToDiscard, ackSender) -> {
@@ -137,6 +184,7 @@ public class GameModule {
         server.getBroadcastOperations().sendEvent(SocketEvent.GAME_UPDATE_DISCARD_PILE, cardToDiscard);
         server.getBroadcastOperations().sendEvent(SocketEvent.GAME_UPDATE_REMAINING_DECK, deck.size());
         updateCardsOnPlayersHand();
+        endPlayerTurn();
       }
     };
   }
