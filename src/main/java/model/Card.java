@@ -12,6 +12,7 @@ public class Card {
   String suit;
   String value;
   String color;
+  Boolean isPlayable;
 
   // == Constructor ==========================
 

@@ -19,34 +19,34 @@ public class GameUtilTest {
   @Test
   public void shouldReturnCorrectScore () {
     Assertions.assertEquals(5, GameUtil.calculateScore(new ArrayList<>(){{
-      add(new Card(CardSuit.CLUBS, CardValue.A, CardColor.RED));
-      add(new Card(CardSuit.CLUBS, CardValue.A, CardColor.RED));
-      add(new Card(CardSuit.CLUBS, CardValue.A, CardColor.RED));
-      add(new Card(CardSuit.CLUBS, CardValue.A, CardColor.RED));
-      add(new Card(CardSuit.CLUBS, CardValue.A, CardColor.RED));
+      add(new Card(CardSuit.CLUBS, CardValue.A, CardColor.RED, true));
+      add(new Card(CardSuit.CLUBS, CardValue.A, CardColor.RED, true));
+      add(new Card(CardSuit.CLUBS, CardValue.A, CardColor.RED, true));
+      add(new Card(CardSuit.CLUBS, CardValue.A, CardColor.RED, true));
+      add(new Card(CardSuit.CLUBS, CardValue.A, CardColor.RED, true));
     }}));
 
     Assertions.assertEquals(6, GameUtil.calculateScore(new ArrayList<>(){{
-      add(new Card(CardSuit.CLUBS, CardValue.TWO, CardColor.RED));
-      add(new Card(CardSuit.CLUBS, CardValue.A, CardColor.RED));
-      add(new Card(CardSuit.CLUBS, CardValue.A, CardColor.RED));
-      add(new Card(CardSuit.CLUBS, CardValue.A, CardColor.RED));
-      add(new Card(CardSuit.CLUBS, CardValue.A, CardColor.RED));
+      add(new Card(CardSuit.CLUBS, CardValue.TWO, CardColor.RED, true));
+      add(new Card(CardSuit.CLUBS, CardValue.A, CardColor.RED, true));
+      add(new Card(CardSuit.CLUBS, CardValue.A, CardColor.RED, true));
+      add(new Card(CardSuit.CLUBS, CardValue.A, CardColor.RED, true));
+      add(new Card(CardSuit.CLUBS, CardValue.A, CardColor.RED, true));
     }}));
 
     Assertions.assertEquals(54, GameUtil.calculateScore(new ArrayList<>(){{
-      add(new Card(CardSuit.CLUBS, CardValue.A, CardColor.RED));
-      add(new Card(CardSuit.CLUBS, CardValue.A, CardColor.RED));
-      add(new Card(CardSuit.CLUBS, CardValue.A, CardColor.RED));
-      add(new Card(CardSuit.CLUBS, CardValue.A, CardColor.RED));
-      add(new Card(CardSuit.CLUBS, CardValue.EIGHT, CardColor.RED));
+      add(new Card(CardSuit.CLUBS, CardValue.A, CardColor.RED, true));
+      add(new Card(CardSuit.CLUBS, CardValue.A, CardColor.RED, true));
+      add(new Card(CardSuit.CLUBS, CardValue.A, CardColor.RED, true));
+      add(new Card(CardSuit.CLUBS, CardValue.A, CardColor.RED, true));
+      add(new Card(CardSuit.CLUBS, CardValue.EIGHT, CardColor.RED, true));
     }}));
   }
 
   @Test
   public void shouldCorrectlyVerifyCard () {
-    Card playerCard = new Card(CardSuit.CLUBS, CardValue.TWO, CardColor.RED);
-    Card target = new Card(CardSuit.CLUBS, CardValue.TWO, CardColor.RED);
+    Card playerCard = new Card(CardSuit.CLUBS, CardValue.TWO, CardColor.RED, true);
+    Card target = new Card(CardSuit.CLUBS, CardValue.TWO, CardColor.RED, true);
 
     Assertions.assertTrue(GameUtil.doesTwoCardsMatch(playerCard, target));
 

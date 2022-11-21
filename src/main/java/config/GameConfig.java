@@ -65,9 +65,9 @@ public class GameConfig {
     for (String suit: CARD_SUITS) {
       for (String value: CARD_VALUES) {
         if (suit.equals(CardSuit.HEARTS) || suit.equals(CardSuit.DIAMONDS)) {
-          add(new Card(suit, value, CardColor.RED));
+          add(new Card(suit, value, CardColor.RED, true));
         } else {
-          add(new Card(suit, value, CardColor.BLACK));
+          add(new Card(suit, value, CardColor.BLACK, true));
         }
       }
     }
