@@ -24,4 +24,8 @@ public class Util {
       return subTotal + points;
     }, Integer::sum);
   }
+
+  public static boolean doesTwoCardsMatch (Card playerCard, Card target) {
+    return false;
+  }
 }

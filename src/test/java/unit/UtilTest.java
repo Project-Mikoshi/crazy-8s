@@ -42,4 +42,28 @@ public class UtilTest {
       add(new Card(CardSuit.CLUBS, CardValue.EIGHT, CardColor.RED));
     }}));
   }
+
+  @Test
+  public void shouldCorrectlyVerifyCard () {
+    Card playerCard = new Card(CardSuit.CLUBS, CardValue.TWO, CardColor.RED);
+    Card target = new Card(CardSuit.CLUBS, CardValue.TWO, CardColor.RED);
+
+    Assertions.assertTrue(Util.doesTwoCardsMatch(playerCard, target));
+
+    playerCard.setValue(CardValue.EIGHT);
+    playerCard.setSuit(CardSuit.DIAMONDS);
+    Assertions.assertTrue(Util.doesTwoCardsMatch(playerCard, target));
+
+    playerCard.setValue(CardValue.TWO);
+    playerCard.setSuit(CardSuit.DIAMONDS);
+    Assertions.assertTrue(Util.doesTwoCardsMatch(playerCard, target));
+
+    playerCard.setValue(CardValue.QUEEN);
+    playerCard.setSuit(CardSuit.CLUBS);
+    Assertions.assertTrue(Util.doesTwoCardsMatch(playerCard, target));
+
+    playerCard.setValue(CardValue.THREE);
+    playerCard.setSuit(CardSuit.DIAMONDS);
+    Assertions.assertFalse(Util.doesTwoCardsMatch(playerCard, target));
+  }
 }
