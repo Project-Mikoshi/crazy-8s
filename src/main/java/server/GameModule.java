@@ -16,7 +16,7 @@ import constant.SocketEvent;
 import lombok.Getter;
 import lombok.Setter;
 import model.*;
-import util.Util;
+import util.GameUtil;
 
 @Getter
 @Setter
@@ -37,7 +37,7 @@ public class GameModule {
     this.server = server;
     players = new HashMap<>();
     winner = null;
-    deck = Util.shuffleAndBuildCardsStack();
+    deck = GameUtil.shuffleAndBuildCardsStack();
     discardPile = new Stack<>();
 
     if (this.server != null) {

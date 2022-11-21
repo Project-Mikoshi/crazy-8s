@@ -8,7 +8,7 @@ import config.GameConfig;
 import constant.CardValue;
 import model.Card;
 
-public class Util {
+public class GameUtil {
   public static Stack<Card> shuffleAndBuildCardsStack () {
     return new Stack<Card>(){{
       List<Card> cards = GameConfig.CARDS;
