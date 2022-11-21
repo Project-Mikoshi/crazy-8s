@@ -30,5 +30,6 @@ export enum CardColor {
 export interface Card {
   value: CardValue,
   suit: CardSuit,
-  color: CardColor
+  color: CardColor,
+  isPlayable: boolean
 }

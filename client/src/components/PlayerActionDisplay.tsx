@@ -1,10 +1,11 @@
 import React from 'react'
-import { Fab, Grid, Stack, Typography } from '@mui/material'
+import { Fab, Grid, Stack, Tooltip, Typography } from '@mui/material'
 import HandIcon from '@mui/icons-material/PanToolRounded'
 import CardDisplay from './CardDisplay'
 import { Card } from '@/types/card'
 
 interface PlayerDisplayProps {
+  isPlaying: boolean,
   cards: Array<Card>,
   playerName: string,
   onDiscardCard: (card: Card) => void
@@ -12,7 +13,10 @@ interface PlayerDisplayProps {
 
 export default function (props: PlayerDisplayProps) {
   // == Props ================================
-  const { cards, playerName, onDiscardCard } = props
+  const { cards, playerName, onDiscardCard, isPlaying } = props
+
+  // == Computed Props =======================
+  const noCardToPlay = cards.every(card => !card.isPlayable)
 
   // == States ===============================
 
@@ -35,17 +39,20 @@ export default function (props: PlayerDisplayProps) {
       <Grid item xs={10} container sx={{ overflowX: 'auto', overflowY: 'hidden' }}>
         <Stack direction='row'>
           {cards.map((card, index) => (
-            <CardDisplay key={index} card={card} id={index} onSelect={onSelect}/>
+            <CardDisplay disabled={isPlaying} key={index} card={card} id={index} onSelect={onSelect}/>
           ))}
         </Stack>
       </Grid>
 
-      <Grid item xs= {2} container alignItems='center'>
-        <Fab variant='extended' color='primary'>
-          <HandIcon sx={{ mr: 2 }} />
-          <Typography>Draw</Typography>
-        </Fab>
-      </Grid>
+      {noCardToPlay && (
+        <Grid item xs= {2} container alignItems='center'>
+          <Tooltip title='draw a new card from deck'>
+            <Fab variant='extended' color='primary'>
+              <HandIcon />
+            </Fab>
+          </Tooltip>
+        </Grid>
+      )}
     </Grid>
   )
 }

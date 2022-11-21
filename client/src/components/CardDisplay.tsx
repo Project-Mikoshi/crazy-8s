@@ -16,8 +16,9 @@ export default function (props: CardDisplayProps) {
   // == States ===============================
 
   // == Computed Props =======================
-  const { color, suit, value } = card
-  const fillOpacity = 0.65
+  const { color, suit, value, isPlayable } = card
+  const playable = isPlayable && !disabled
+  const fillOpacity = playable ? 0.9 : 0.65
 
   // == Lifecycle ============================
 
@@ -136,7 +137,7 @@ export default function (props: CardDisplayProps) {
   // == Template =============================
   return (
     <Box sx={{ height: '200px', width: '250px' }}>
-      <svg className={`card-display-svg ${disabled ? 'disabled' : ''}`} viewBox='0 0 200 250' fillOpacity={fillOpacity} role='button' onClick={handleClick}>
+      <svg className={`card-display-svg ${!playable ? 'disabled' : ''}`} viewBox='0 0 200 250' fillOpacity={fillOpacity} role='button' onClick={handleClick}>
         <g>
           <path
             fill='aliceblue'
