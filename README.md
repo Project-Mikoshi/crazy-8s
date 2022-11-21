@@ -38,4 +38,3 @@ mvn test
             ├── features                  <-  acceptance test features   
             │   └── multiplayer.feature
 ```
-
