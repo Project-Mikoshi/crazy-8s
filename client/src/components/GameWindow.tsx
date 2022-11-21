@@ -19,6 +19,7 @@ export default function (props: GameWindowProps) {
   const [remainingDeckCount, setRemainingDeckCount] = useState(0)
   const [topDiscardedCard, setTopDiscardedCard] = useState<Card>()
   const [gameState, setGameState] = useState<GameState>(GameState.READY_TO_JOIN)
+  const [isPlaying, setIsPlaying] = useState(false)
   const [playerName, setPlayerName] = useState('')
   const [playerCards, setPlayerCards] = useState<Array<Card>>([])
   const [serverMessages, setServerMessages] = useState<Array<string>>([])
@@ -48,6 +49,14 @@ export default function (props: GameWindowProps) {
 
     socket.on(SocketEvent.GAME_UPDATE_DISCARD_PILE, (card: Card) => {
       setTopDiscardedCard(card)
+    })
+
+    socket.on(SocketEvent.GAME_START_PLAYER_TURN, () => {
+      setIsPlaying(true)
+    })
+
+    socket.on(SocketEvent.GAME_END_PLAYER_TURN, () => {
+      setIsPlaying(false)
     })
 
     socket.on(SocketEvent.GAME_UPDATE_REMAINING_DECK, (count: number) => {
@@ -122,7 +131,7 @@ export default function (props: GameWindowProps) {
             <ServerMessageBox messages={serverMessages} />
           </Grid>
           <Grid item md={12}>
-            <PlayerActionDisplay cards={playerCards} playerName={playerName} onDiscardCard={discardCard} />
+            <PlayerActionDisplay isPlaying={isPlaying} cards={playerCards} playerName={playerName} onDiscardCard={discardCard} />
           </Grid>
         </>
       )

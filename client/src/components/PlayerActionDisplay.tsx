@@ -34,23 +34,27 @@ export default function (props: PlayerDisplayProps) {
     <Grid container spacing={2}>
       <Grid item xs={12}>
         <Typography variant='h4'>{playerName}</Typography>
+        {!isPlaying && (
+          <Typography variant='subtitle1'>You must wait for other player to finish their turn</Typography>
+        )}
       </Grid>
 
       <Grid item xs={10} container sx={{ overflowX: 'auto', overflowY: 'hidden' }}>
         <Stack direction='row'>
           {cards.map((card, index) => (
-            <CardDisplay disabled={isPlaying} key={index} card={card} id={index} onSelect={onSelect}/>
+            <CardDisplay disabled={!isPlaying} key={index} card={card} id={index} onSelect={onSelect}/>
           ))}
         </Stack>
       </Grid>
 
-      {noCardToPlay && (
-        <Grid item xs= {2} container alignItems='center'>
+      {isPlaying && noCardToPlay && (
+        <Grid item xs= {2} container justifyContent='center' flexDirection='column'>
           <Tooltip title='draw a new card from deck'>
             <Fab variant='extended' color='primary'>
               <HandIcon />
             </Fab>
           </Tooltip>
+          <Typography variant='body1'>You need to draw a card</Typography>
         </Grid>
       )}
     </Grid>
