@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Stack;
 import config.GameConfig;
+import constant.CardValue;
 import model.Card;
 
 public class Util {
@@ -26,6 +27,9 @@ public class Util {
   }
 
   public static boolean doesTwoCardsMatch (Card playerCard, Card target) {
-    return false;
+    String value = playerCard.getValue();
+    String suit = playerCard.getSuit();
+
+    return value.equals(CardValue.EIGHT) || value.equals(target.getValue()) || suit.equals(target.getSuit());
   }
 }
