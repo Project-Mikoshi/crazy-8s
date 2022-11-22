@@ -95,4 +95,43 @@ public class GameUtilTest {
 
     Assertions.assertFalse(GameUtil.playerHasPlayableCards(player));
   }
+
+  @Test
+  public void shouldCorrectlyCheckIfAnyPlayerHasPlayableCard () {
+    Card playableCard = new Card(CardSuit.CLUBS, CardValue.TWO, CardColor.RED, true);
+    Card nonPlayableCard = new Card(CardSuit.CLUBS, CardValue.TWO, CardColor.RED, false);
+
+    Player player1 = new Player(null, "test");
+    Player player2 = new Player(null, "test");
+    Player player3 = new Player(null, "test");
+    player1.setCardsHeld(new ArrayList<Card>(){{
+      add(playableCard);
+      add(nonPlayableCard);
+    }});
+    player2.setCardsHeld(new ArrayList<Card>(){{
+      add(nonPlayableCard);
+      add(nonPlayableCard);
+    }});
+    player3.setCardsHeld(new ArrayList<Card>(){{
+      add(nonPlayableCard);
+      add(nonPlayableCard);
+    }});
+
+    Assertions.assertTrue(GameUtil.somePlayerHasPlayableCards(new ArrayList<>(){{
+      add(player1);
+      add(player2);
+      add(player3);
+    }}));
+
+    player1.setCardsHeld(new ArrayList<Card>(){{
+      add(nonPlayableCard);
+      add(nonPlayableCard);
+    }});
+
+    Assertions.assertFalse(GameUtil.somePlayerHasPlayableCards(new ArrayList<>(){{
+      add(player1);
+      add(player2);
+      add(player3);
+    }}));
+  }
 }

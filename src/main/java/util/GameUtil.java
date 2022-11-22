@@ -34,6 +34,10 @@ public class GameUtil {
     return value.equals(CardValue.EIGHT) || value.equals(target.getValue()) || suit.equals(target.getSuit());
   }
 
+  public static boolean somePlayerHasPlayableCards (ArrayList<Player> players) {
+    return false;
+  }
+
   public static boolean playerHasPlayableCards (Player player) {
     return player.getCardsHeld().stream().anyMatch(card -> card.getIsPlayable());
   }
