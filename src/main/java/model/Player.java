@@ -11,12 +11,14 @@ public class Player implements Comparable<Player> {
   String name;
   int score;
   ArrayList<Card> cardsHeld;
+  int drawnCardCount;
 
   // == Constructor ==========================
   public Player (UUID id, String name) {
     this.id = id;
     this.name = name;
     this.score = 0;
+    this.drawnCardCount = 0;
     cardsHeld = new ArrayList<>();
   }
 

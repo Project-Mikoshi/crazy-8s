@@ -1,6 +1,7 @@
 package util;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Stack;
@@ -34,7 +35,7 @@ public class GameUtil {
     return value.equals(CardValue.EIGHT) || value.equals(target.getValue()) || suit.equals(target.getSuit());
   }
 
-  public static boolean somePlayerHasPlayableCards (ArrayList<Player> players) {
+  public static boolean somePlayerHasPlayableCards (Collection<Player> players) {
     return players.stream().anyMatch(player -> playerHasPlayableCards(player));
   }
 
