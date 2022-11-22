@@ -9,11 +9,13 @@ import constant.CardValue;
 import model.Card;
 
 public class GameConfig {
-  public static final int NUM_OF_PLAYERS = 1;
+  public static final int NUM_OF_PLAYERS = 3;
 
   public static final int NUM_OF_INITIAL_CARDS = 5;
 
   public static final int SCORE_THRESHOLD = 100;
+
+  public static final int MAX_DRAW_PER_TURN = 3;
 
   public static final String GAME_ROOM = "crazy 8s";
 

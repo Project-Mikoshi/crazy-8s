@@ -12,6 +12,7 @@ public class Player implements Comparable<Player> {
   int score;
   ArrayList<Card> cardsHeld;
   int drawnCardCount;
+  int discardCardCount;
 
   // == Constructor ==========================
   public Player (UUID id, String name) {
@@ -19,6 +20,7 @@ public class Player implements Comparable<Player> {
     this.name = name;
     this.score = 0;
     this.drawnCardCount = 0;
+    this.discardCardCount = 0;
     cardsHeld = new ArrayList<>();
   }
 

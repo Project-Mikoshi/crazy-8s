@@ -41,7 +41,7 @@ public class GameModule {
     players = new HashMap<>();
     winner = null;
     currentPlayer = null;
-    deck = GameUtil.shuffleAndBuildCardsStack();
+    deck = new Stack<>();
     discardPile = new Stack<>();
     playerOrder = new ArrayList<>();
     orderReversed = false;
@@ -72,6 +72,8 @@ public class GameModule {
     server.getRoomOperations(GameConfig.GAME_ROOM).sendEvent(SocketEvent.MESSAGE, "Game started");
     server.getRoomOperations(GameConfig.GAME_ROOM).sendEvent(SocketEvent.GAME_START);
 
+    deck = GameUtil.shuffleAndBuildCardsStack();
+
     dealCardsToPlayer();
     drawFirstCardForDiscardPle();
 
@@ -79,6 +81,20 @@ public class GameModule {
     orderReversed = false;
 
     promptPlayerToStart();
+  }
+
+  public void endCurrentRound () {
+    server.getRoomOperations(GameConfig.GAME_ROOM).sendEvent(SocketEvent.MESSAGE, "Round ended, updating score for all");
+    server.getRoomOperations(GameConfig.GAME_ROOM).sendEvent(SocketEvent.GAME_END_PLAYER_TURN);
+
+    players.forEach((id, player) -> {
+      int currentScore = player.getScore();
+      int delta = GameUtil.calculateScore(player.getCardsHeld());
+      int newScore = currentScore + delta;
+
+      player.setScore(newScore);
+      server.getClient(id).sendEvent(SocketEvent.MESSAGE, "Your score have been updated by %d".formatted(delta));
+    });
   }
 
   // == Private Method =======================
@@ -116,7 +132,7 @@ public class GameModule {
 
   private Card drawCardFromDeck () {
     if (deck.isEmpty()) {
-      log.info("No card left in the deck, round will end");
+      log.info("No card left in the deck");
 
       return null;
     }
@@ -136,9 +152,17 @@ public class GameModule {
 
   private void promptPlayerToStart () {
     Player player = players.get(currentPlayer);
-    player.setDrawnCardCount(0);
-    server.getClient(currentPlayer).sendEvent(SocketEvent.GAME_START_PLAYER_TURN);
-    server.getRoomOperations(GameConfig.GAME_ROOM).sendEvent(SocketEvent.MESSAGE, "%s is playing".formatted(player.getName()));
+
+    if (!GameUtil.playerHasPlayableCards(player) && deck.isEmpty()) {
+      server.getClient(currentPlayer).sendEvent(SocketEvent.MESSAGE, "You have no playable card, thus skipping your turn");
+      moveToNextPlayer();
+      promptPlayerToStart();
+    } else {
+      player.setDrawnCardCount(0);
+      player.setDiscardCardCount(0);
+      server.getClient(currentPlayer).sendEvent(SocketEvent.GAME_START_PLAYER_TURN);
+      server.getRoomOperations(GameConfig.GAME_ROOM).sendEvent(SocketEvent.MESSAGE, "%s is playing".formatted(player.getName()));
+    }
   }
 
   private void endPlayerTurn () {
@@ -148,15 +172,13 @@ public class GameModule {
 
     if (discardPile.peek().getValue().equals(CardValue.A)) {
       orderReversed = !orderReversed;
+      server.getRoomOperations(GameConfig.GAME_ROOM).sendEvent(SocketEvent.MESSAGE, "Direction reversed!");
     }
 
     if (discardPile.peek().getValue().equals(CardValue.QUEEN)) {
       moveToNextPlayer();
       server.getClient(currentPlayer).sendEvent(SocketEvent.MESSAGE, "Your turn has been skipped due to the action of previous player");
     }
-
-    moveToNextPlayer();
-    promptPlayerToStart();
   }
 
   private void moveToNextPlayer () {
@@ -166,6 +188,36 @@ public class GameModule {
       currentPlayer = currentPlayerIndex - 1 >= 0 ? playerOrder.get(currentPlayerIndex - 1) : playerOrder.get(playerOrder.size() - 1);
     } else {
       currentPlayer = currentPlayerIndex + 1 < playerOrder.size() ?  playerOrder.get(currentPlayerIndex + 1) : playerOrder.get(0);
+    }
+  }
+
+  private void handlePostPlayerActions () {
+    Player player = players.get(currentPlayer);
+
+    if (player.getCardsHeld().isEmpty()) {
+      endCurrentRound();
+      beginNewRound();
+      return;
+    }
+
+    if (deck.isEmpty() && !GameUtil.somePlayerHasPlayableCards(players.values())) {
+      endCurrentRound();
+      beginNewRound();
+      return;
+    }
+    
+    if (player.getDrawnCardCount() >= GameConfig.MAX_DRAW_PER_TURN && !GameUtil.playerHasPlayableCards(player)) {
+      endPlayerTurn();
+      moveToNextPlayer();
+      promptPlayerToStart();
+      return;
+    }
+
+    if (player.getDiscardCardCount() == 1) {
+      endPlayerTurn();
+      moveToNextPlayer();
+      promptPlayerToStart();
+      return;
     }
   }
 
@@ -179,14 +231,16 @@ public class GameModule {
         log.info("receive card to discard {}", cardToDiscard);
 
         player.getCardsHeld().remove(cardToDiscard);
+        player.setDiscardCardCount(player.getDiscardCardCount() + 1);
         client.sendEvent(SocketEvent.MESSAGE, "You have discarded a %s".formatted(cardToDiscard));
         client.sendEvent(SocketEvent.GAME_UPDATE_CARDS, player.getCardsHeld());
 
         discardPile.push(cardToDiscard);
         server.getRoomOperations(GameConfig.GAME_ROOM).sendEvent(SocketEvent.GAME_UPDATE_DISCARD_PILE, cardToDiscard);
         server.getRoomOperations(GameConfig.GAME_ROOM).sendEvent(SocketEvent.GAME_UPDATE_REMAINING_DECK, deck.size());
+
         updateCardsOnPlayersHand();
-        endPlayerTurn();
+        handlePostPlayerActions();
       }
     };
   }
@@ -196,17 +250,17 @@ public class GameModule {
       UUID playerId = client.getSessionId();
       Player player = players.get(playerId);
 
-      if (player != null) {
-        Card card = drawCardFromDeck();
-        card.setIsPlayable(GameUtil.doesTwoCardsMatch(card, discardPile.peek()));
-        log.info("{} draw {} from card deck", player.getName(), card);
+      Card card = drawCardFromDeck();
+      card.setIsPlayable(GameUtil.doesTwoCardsMatch(card, discardPile.peek()));
+      log.info("{} draw {} from card deck", player.getName(), card);
 
-        player.getCardsHeld().add(card);
-        player.setDrawnCardCount(player.getDrawnCardCount() + 1);
-        client.sendEvent(SocketEvent.GAME_UPDATE_CARDS, player.getCardsHeld());
-        client.sendEvent(SocketEvent.MESSAGE, "You have drawn a %s".formatted(card));
-        server.getRoomOperations(GameConfig.GAME_ROOM).sendEvent(SocketEvent.GAME_UPDATE_REMAINING_DECK, deck.size());
-      }
+      player.getCardsHeld().add(card);
+      player.setDrawnCardCount(player.getDrawnCardCount() + 1);
+      client.sendEvent(SocketEvent.GAME_UPDATE_CARDS, player.getCardsHeld());
+      client.sendEvent(SocketEvent.MESSAGE, "You have drawn a %s".formatted(card));
+      server.getRoomOperations(GameConfig.GAME_ROOM).sendEvent(SocketEvent.GAME_UPDATE_REMAINING_DECK, deck.size());
+
+      handlePostPlayerActions();
     };
   }
 
