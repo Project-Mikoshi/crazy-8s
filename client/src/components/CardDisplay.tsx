@@ -58,7 +58,7 @@ export default function (props: CardDisplayProps) {
 
   // == Template =============================
   return (
-    <Box sx={{ height: '200px', width: '250px' }}>
+    <Box sx={{ minHeight: '100px', minWidth: '125px', maxHeight: '150px', maxWidth: '187.5px' }}>
       <svg className={`card-display-svg ${!playable ? 'disabled' : ''}`} viewBox='0 0 200 250' fillOpacity={fillOpacity} role='button' onClick={handleClick}>
         <g>
           <path

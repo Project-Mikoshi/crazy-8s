@@ -1,4 +1,5 @@
 import React from 'react'
+import PerfectScrollbar from 'react-perfect-scrollbar'
 import { Fab, Grid, Stack, Tooltip, Typography } from '@mui/material'
 import HandIcon from '@mui/icons-material/PanToolRounded'
 import CardDisplay from './CardDisplay'
@@ -8,12 +9,13 @@ interface PlayerDisplayProps {
   isPlaying: boolean,
   cards: Array<Card>,
   playerName: string,
-  onDiscardCard: (card: Card) => void
+  onDiscardCard: (card: Card) => void,
+  onDrawCard: () => void
 }
 
 export default function (props: PlayerDisplayProps) {
   // == Props ================================
-  const { cards, playerName, onDiscardCard, isPlaying } = props
+  const { cards, playerName, onDiscardCard, isPlaying, onDrawCard } = props
 
   // == Computed Props =======================
   const noCardToPlay = cards.every(card => !card.isPlayable)
@@ -39,18 +41,20 @@ export default function (props: PlayerDisplayProps) {
         )}
       </Grid>
 
-      <Grid item xs={10} container sx={{ overflowX: 'auto', overflowY: 'hidden' }}>
-        <Stack direction='row'>
-          {cards.map((card, index) => (
-            <CardDisplay disabled={!isPlaying} key={index} card={card} id={index} onSelect={onSelect}/>
-          ))}
-        </Stack>
+      <Grid item xs={10}>
+        <PerfectScrollbar>
+          <Stack direction='row' sx={{ margin: '1rem' }}>
+            {cards.map((card, index) => (
+              <CardDisplay disabled={!isPlaying} key={index} card={card} id={index} onSelect={onSelect}/>
+            ))}
+          </Stack>
+        </PerfectScrollbar>
       </Grid>
 
       {isPlaying && noCardToPlay && (
         <Grid item xs= {2} container justifyContent='center' flexDirection='column'>
           <Tooltip title='draw a new card from deck'>
-            <Fab variant='extended' color='primary'>
+            <Fab variant='extended' color='primary' onClick={onDrawCard}>
               <HandIcon />
             </Fab>
           </Tooltip>
