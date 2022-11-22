@@ -35,7 +35,7 @@ public class GameUtil {
   }
 
   public static boolean somePlayerHasPlayableCards (ArrayList<Player> players) {
-    return false;
+    return players.stream().anyMatch(player -> playerHasPlayableCards(player));
   }
 
   public static boolean playerHasPlayableCards (Player player) {
