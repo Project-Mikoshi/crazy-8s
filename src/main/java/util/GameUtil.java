@@ -35,6 +35,6 @@ public class GameUtil {
   }
 
   public static boolean playerHasPlayableCards (Player player) {
-    return false;
+    return player.getCardsHeld().stream().anyMatch(card -> card.getIsPlayable());
   }
 }
