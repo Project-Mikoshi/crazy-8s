@@ -38,3 +38,17 @@ mvn test
             ├── features                  <-  acceptance test features   
             │   └── multiplayer.feature
 ```
+
+## About Commit
+
+```md
+[code]        <- game util function code that are tested by matching unit tests
+[u-test]      <- unit testings for util function related to game
+[a-test]      <- acceptance tests related to game features
+[refactor]    <- code that improve but does not change the existing behavior of game
+[ui]          <- ui code that does not require unit tests
+[network]     <- server or game module related networking handling code
+[ui+network]  <- synchronous backend and frontend code changes
+[doc]         <- documentation update
+[init]        <- initial project dependencies, build steps, directories setup, continuous integration setup
+```
