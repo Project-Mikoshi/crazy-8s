@@ -79,6 +79,10 @@ export default function (props: GameWindowProps) {
     socket.emit(SocketEvent.GAME_DISCARD_CARD, card)
   }
 
+  function drawCard () {
+    socket.emit(SocketEvent.GAME_DRAW_CARD)
+  }
+
   // == Template =============================
   switch (gameState) {
     case (GameState.READY_TO_JOIN): {
@@ -127,11 +131,11 @@ export default function (props: GameWindowProps) {
           <Grid item md={8}>
             <DeckDisplay topCardOnDiscardPile={topDiscardedCard} remainingDeckCount={remainingDeckCount} />
           </Grid>
-          <Grid item md={4}>
+          <Grid item md={4} height='33%' overflow='hidden'>
             <ServerMessageBox messages={serverMessages} />
           </Grid>
           <Grid item md={12}>
-            <PlayerActionDisplay isPlaying={isPlaying} cards={playerCards} playerName={playerName} onDiscardCard={discardCard} />
+            <PlayerActionDisplay isPlaying={isPlaying} cards={playerCards} playerName={playerName} onDiscardCard={discardCard} onDrawCard={drawCard} />
           </Grid>
         </>
       )

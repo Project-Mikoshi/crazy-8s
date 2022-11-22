@@ -48,6 +48,7 @@ public class GameModule {
 
     if (this.server != null) {
       server.addEventListener(SocketEvent.GAME_DISCARD_CARD, Card.class, playerDiscardCard());
+      server.addEventListener(SocketEvent.GAME_DRAW_CARD, String.class, playerDrawCard());
     }
   }
 
@@ -135,6 +136,7 @@ public class GameModule {
 
   private void promptPlayerToStart () {
     Player player = players.get(currentPlayer);
+    player.setDrawnCardCount(0);
     server.getClient(currentPlayer).sendEvent(SocketEvent.GAME_START_PLAYER_TURN);
     server.getRoomOperations(GameConfig.GAME_ROOM).sendEvent(SocketEvent.MESSAGE, "%s is playing".formatted(player.getName()));
   }
@@ -181,10 +183,29 @@ public class GameModule {
         client.sendEvent(SocketEvent.GAME_UPDATE_CARDS, player.getCardsHeld());
 
         discardPile.push(cardToDiscard);
-        server.getBroadcastOperations().sendEvent(SocketEvent.GAME_UPDATE_DISCARD_PILE, cardToDiscard);
-        server.getBroadcastOperations().sendEvent(SocketEvent.GAME_UPDATE_REMAINING_DECK, deck.size());
+        server.getRoomOperations(GameConfig.GAME_ROOM).sendEvent(SocketEvent.GAME_UPDATE_DISCARD_PILE, cardToDiscard);
+        server.getRoomOperations(GameConfig.GAME_ROOM).sendEvent(SocketEvent.GAME_UPDATE_REMAINING_DECK, deck.size());
         updateCardsOnPlayersHand();
         endPlayerTurn();
+      }
+    };
+  }
+
+  private DataListener<String> playerDrawCard () {
+    return (client, clientMessage, ackSender) -> {
+      UUID playerId = client.getSessionId();
+      Player player = players.get(playerId);
+
+      if (player != null) {
+        Card card = drawCardFromDeck();
+        card.setIsPlayable(GameUtil.doesTwoCardsMatch(card, discardPile.peek()));
+        log.info("{} draw {} from card deck", player.getName(), card);
+
+        player.getCardsHeld().add(card);
+        player.setDrawnCardCount(player.getDrawnCardCount() + 1);
+        client.sendEvent(SocketEvent.GAME_UPDATE_CARDS, player.getCardsHeld());
+        client.sendEvent(SocketEvent.MESSAGE, "You have drawn a %s".formatted(card));
+        server.getRoomOperations(GameConfig.GAME_ROOM).sendEvent(SocketEvent.GAME_UPDATE_REMAINING_DECK, deck.size());
       }
     };
   }
