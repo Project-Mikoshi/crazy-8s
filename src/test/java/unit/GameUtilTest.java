@@ -8,6 +8,7 @@ import constant.CardColor;
 import constant.CardSuit;
 import constant.CardValue;
 import model.Card;
+import model.Player;
 
 public class GameUtilTest {
 
@@ -65,5 +66,33 @@ public class GameUtilTest {
     playerCard.setValue(CardValue.THREE);
     playerCard.setSuit(CardSuit.DIAMONDS);
     Assertions.assertFalse(GameUtil.doesTwoCardsMatch(playerCard, target));
+  }
+
+  @Test
+  public void shouldCorrectlyCheckIfPlayerHasPlayableCard () {
+    Card playableCard = new Card(CardSuit.CLUBS, CardValue.TWO, CardColor.RED, true);
+    Card nonPlayableCard = new Card(CardSuit.CLUBS, CardValue.TWO, CardColor.RED, false);
+
+    Player player = new Player(null, "test");
+    player.setCardsHeld(new ArrayList<Card>(){{
+      add(playableCard);
+      add(nonPlayableCard);
+    }});
+
+    Assertions.assertTrue(GameUtil.playerHasPlayableCards(player));
+
+    player.setCardsHeld(new ArrayList<Card>(){{
+      add(playableCard);
+      add(playableCard);
+    }});
+
+    Assertions.assertTrue(GameUtil.playerHasPlayableCards(player));
+
+    player.setCardsHeld(new ArrayList<Card>(){{
+      add(nonPlayableCard);
+      add(nonPlayableCard);
+    }});
+
+    Assertions.assertFalse(GameUtil.playerHasPlayableCards(player));
   }
 }

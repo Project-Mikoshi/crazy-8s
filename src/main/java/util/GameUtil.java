@@ -7,6 +7,7 @@ import java.util.Stack;
 import config.GameConfig;
 import constant.CardValue;
 import model.Card;
+import model.Player;
 
 public class GameUtil {
   public static Stack<Card> shuffleAndBuildCardsStack () {
@@ -31,5 +32,9 @@ public class GameUtil {
     String suit = playerCard.getSuit();
 
     return value.equals(CardValue.EIGHT) || value.equals(target.getValue()) || suit.equals(target.getSuit());
+  }
+
+  public static boolean playerHasPlayableCards (Player player) {
+    return false;
   }
 }
