@@ -19,7 +19,7 @@
     <maven.surefire.version>3.0.0-M7</maven.surefire.version>
     <maven.resources.version>3.3.0</maven.resources.version>
     <spring-boot.maven.version>2.7.5</spring-boot.maven.version>
-    <netty-socketio.version>1.7.22</netty-socketio.version>
+    <netty-socketio.version>1.7.19</netty-socketio.version>
     <spring-boot-starter.web.version>2.7.5</spring-boot-starter.web.version>
     <spring-boot-starter.actuator.version>2.7.5</spring-boot-starter.actuator.version>
     <spring-boot-starter.test.version>2.7.5</spring-boot-starter.test.version>
