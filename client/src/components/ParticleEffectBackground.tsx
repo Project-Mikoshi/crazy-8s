@@ -6,7 +6,7 @@ import { OPTIONS } from '@/constants/particles-options'
 
 export default function () {
   // == Props ================================
-  const theme = 'dark'
+  const theme = 'light'
 
   // == Hooks ================================
   const particlesInit = useCallback(async (engine: Engine) => {

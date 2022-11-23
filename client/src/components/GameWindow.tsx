@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react'
-import { Grid, LinearProgress, Typography, Button, TextField, Paper } from '@mui/material'
-import ServerMessageBox from '@/components/ServerMessageBox'
+import { Grid, LinearProgress, Typography, Button, TextField } from '@mui/material'
+import ServerMessageCard from '@/components/ServerMessageCard'
 import PlayerActionDisplay from '@/components/PlayerActionDisplay'
-import DeckDisplay from '@/components/DeckDisplay'
+import GameInfoDisplay from '@/components/GameInfoDisplay'
 import { Card } from '@/types/card'
 import { GameState } from '@/types/game'
 import { SocketEvent } from '@/types/api'
+import { Player } from '@/types/player'
 
 interface GameWindowProps {
   socket: any
@@ -21,6 +22,7 @@ export default function (props: GameWindowProps) {
   const [gameState, setGameState] = useState<GameState>(GameState.READY_TO_JOIN)
   const [isPlaying, setIsPlaying] = useState(false)
   const [playerName, setPlayerName] = useState('')
+  const [players, setPlayers] = useState<Array<Player>>([])
   const [playerCards, setPlayerCards] = useState<Array<Card>>([])
   const [serverMessages, setServerMessages] = useState<Array<string>>([])
 
@@ -62,6 +64,10 @@ export default function (props: GameWindowProps) {
     socket.on(SocketEvent.GAME_UPDATE_REMAINING_DECK, (count: number) => {
       setRemainingDeckCount(count)
     })
+
+    socket.on(SocketEvent.GAME_UPDATE_PLAYERS_INFO, (players: Array<Player>) => {
+      setPlayers(players)
+    })
   }, [])
 
   // == Functions ============================
@@ -93,15 +99,13 @@ export default function (props: GameWindowProps) {
           </Grid>
 
           <Grid item xs={6}>
-            <Paper>
-              <TextField
-                id='player-name-input-box'
-                fullWidth
-                placeholder='Enter your name'
-                value={playerName}
-                onChange={updatePlayerName}
-              />
-            </Paper>
+            <TextField
+              id='player-name-input-box'
+              fullWidth
+              helperText='Enter Player Name'
+              value={playerName}
+              onChange={updatePlayerName}
+            />
           </Grid>
 
           <Grid item xs={10} textAlign='center'>
@@ -118,9 +122,6 @@ export default function (props: GameWindowProps) {
             <Typography variant='h6'>Waiting for more players to join</Typography>
             <LinearProgress />
           </Grid>
-          <Grid item xs={2}>
-            <ServerMessageBox messages={serverMessages} />
-          </Grid>
         </>
       )
     }
@@ -128,14 +129,14 @@ export default function (props: GameWindowProps) {
     case (GameState.STARTED): {
       return (
         <>
-          <Grid item md={8}>
-            <DeckDisplay topCardOnDiscardPile={topDiscardedCard} remainingDeckCount={remainingDeckCount} />
+          <Grid item container md={9}>
+            <GameInfoDisplay topCardOnDiscardPile={topDiscardedCard} remainingDeckCount={remainingDeckCount} players={players} />
           </Grid>
-          <Grid item md={4} height='33%' overflow='hidden'>
-            <ServerMessageBox messages={serverMessages} />
+          <Grid item container md={3}>
+            <ServerMessageCard messages={serverMessages} />
           </Grid>
-          <Grid item md={12}>
-            <PlayerActionDisplay isPlaying={isPlaying} cards={playerCards} playerName={playerName} onDiscardCard={discardCard} onDrawCard={drawCard} />
+          <Grid item container md={12}>
+            <PlayerActionDisplay deckCount={remainingDeckCount} isPlaying={isPlaying} cards={playerCards} playerName={playerName} onDiscardCard={discardCard} onDrawCard={drawCard} />
           </Grid>
         </>
       )

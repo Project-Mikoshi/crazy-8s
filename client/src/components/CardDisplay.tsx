@@ -1,5 +1,4 @@
 import React from 'react'
-import { Box } from '@mui/material'
 import Club from 'src/svgs/Club'
 import Diamond from 'src/svgs/Diamond'
 import Heart from 'src/svgs/Heart'
@@ -25,7 +24,8 @@ export default function (props: CardDisplayProps) {
   // == Computed Props =======================
   const { color, suit, value, isPlayable } = card
   const playable = isPlayable && !disabled
-  const fillOpacity = playable ? 0.9 : 0.65
+  const fillOpacity = playable ? 1 : 0.8
+  const fillColor = playable ? '#b2dfdb' : '#e3f2fd'
 
   const CARD_SHAPE_SVGS = {
     [CardSuit.CLUBS]: <Club color={color} />,
@@ -58,25 +58,23 @@ export default function (props: CardDisplayProps) {
 
   // == Template =============================
   return (
-    <Box sx={{ minHeight: '100px', minWidth: '125px', maxHeight: '150px', maxWidth: '187.5px' }}>
-      <svg className={`card-display-svg ${!playable ? 'disabled' : ''}`} viewBox='0 0 200 250' fillOpacity={fillOpacity} role='button' onClick={handleClick}>
-        <g>
-          <path
-            fill='aliceblue'
-            d='M 199,10 C 199,5 195,1 190,1 L 10,1 C 5,1 1,5 1,10 L 1,240 C 1,245 5,249 10,249 L 190,249 C 195,249 199,245 199,240 L 199,10 z '
-          />
+    <svg className={`card-display-svg ${!playable ? 'disabled' : ''}`} viewBox='0 0 200 250' fillOpacity={fillOpacity} role='button' onClick={handleClick}>
+      <g>
+        <path
+          fill={fillColor}
+          d='M 199,10 C 199,5 195,1 190,1 L 10,1 C 5,1 1,5 1,10 L 1,240 C 1,245 5,249 10,249 L 190,249 C 195,249 199,245 199,240 L 199,10 z '
+        />
 
-          <text x={value === CardValue.TEN ? 10 : 15} y={40} fill={color} stroke={color} fontSize={20}>
-            {value}
-          </text>
-          <text x={value === CardValue.TEN ? -190 : -184} y={-213} transform='scale(-1,-1)' fill={color} stroke={color} fontSize={20}>
-            {value}
-          </text>
+        <text x={value === CardValue.TEN ? 10 : 15} y={40} fill={color} stroke={color} fontSize={20}>
+          {value}
+        </text>
+        <text x={value === CardValue.TEN ? -190 : -184} y={-213} transform='scale(-1,-1)' fill={color} stroke={color} fontSize={20}>
+          {value}
+        </text>
 
-          <CardShape />
-          <SpecialCardShape />
-        </g>
-      </svg>
-    </Box>
+        <CardShape />
+        <SpecialCardShape />
+      </g>
+    </svg>
   )
 }

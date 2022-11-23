@@ -1,7 +1,7 @@
 import React from 'react'
 import PerfectScrollbar from 'react-perfect-scrollbar'
 import { Fab, Grid, Stack, Tooltip, Typography } from '@mui/material'
-import HandIcon from '@mui/icons-material/PanToolRounded'
+import HandIcon from '@mui/icons-material/AddRounded'
 import CardDisplay from './CardDisplay'
 import { Card } from '@/types/card'
 
@@ -9,13 +9,14 @@ interface PlayerDisplayProps {
   isPlaying: boolean,
   cards: Array<Card>,
   playerName: string,
+  deckCount: number,
   onDiscardCard: (card: Card) => void,
   onDrawCard: () => void
 }
 
 export default function (props: PlayerDisplayProps) {
   // == Props ================================
-  const { cards, playerName, onDiscardCard, isPlaying, onDrawCard } = props
+  const { cards, deckCount, playerName, onDiscardCard, isPlaying, onDrawCard } = props
 
   // == Computed Props =======================
   const noCardToPlay = cards.every(card => !card.isPlayable)
@@ -43,7 +44,7 @@ export default function (props: PlayerDisplayProps) {
 
       <Grid item xs={10}>
         <PerfectScrollbar>
-          <Stack direction='row' sx={{ margin: '1rem' }}>
+          <Stack direction='row' sx={{ margin: '1rem', width: 'fit-content' }} spacing={1}>
             {cards.map((card, index) => (
               <CardDisplay disabled={!isPlaying} key={index} card={card} id={index} onSelect={onSelect}/>
             ))}
@@ -51,14 +52,14 @@ export default function (props: PlayerDisplayProps) {
         </PerfectScrollbar>
       </Grid>
 
-      {isPlaying && noCardToPlay && (
-        <Grid item xs= {2} container justifyContent='center' flexDirection='column'>
+      {isPlaying && noCardToPlay && deckCount > 0 && (
+        <Grid item xs={2} container justifyContent='center' alignItems='center' flexDirection='column'>
           <Tooltip title='draw a new card from deck'>
-            <Fab variant='extended' color='primary' onClick={onDrawCard}>
+            <Fab color='primary' onClick={onDrawCard}>
               <HandIcon />
             </Fab>
           </Tooltip>
-          <Typography variant='body1'>You need to draw a card</Typography>
+          <Typography>You need to draw a card</Typography>
         </Grid>
       )}
     </Grid>
