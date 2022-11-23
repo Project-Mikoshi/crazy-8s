@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react'
-import { Grid, LinearProgress, Typography, Button, TextField } from '@mui/material'
+import { SimpleDialog } from '@mikoshi/application-components'
+import { Grid, LinearProgress, Typography, Button, TextField, Stack } from '@mui/material'
 import ServerMessageCard from '@/components/ServerMessageCard'
 import PlayerActionDisplay from '@/components/PlayerActionDisplay'
 import GameInfoDisplay from '@/components/GameInfoDisplay'
+import CardDisplay from '@/components/CardDisplay'
 import { Card } from '@/types/card'
 import { GameState } from '@/types/game'
 import { SocketEvent } from '@/types/api'
@@ -25,6 +27,8 @@ export default function (props: GameWindowProps) {
   const [players, setPlayers] = useState<Array<Player>>([])
   const [playerCards, setPlayerCards] = useState<Array<Card>>([])
   const [serverMessages, setServerMessages] = useState<Array<string>>([])
+  const [isModalOpen, setISModelOpen] = useState(false)
+  const [cardChoices, setCardChoices] = useState<Array<Card>>([])
 
   // == Lifecycle ============================
   useEffect(() => {
@@ -68,6 +72,11 @@ export default function (props: GameWindowProps) {
     socket.on(SocketEvent.GAME_UPDATE_PLAYERS_INFO, (players: Array<Player>) => {
       setPlayers(players)
     })
+
+    socket.on(SocketEvent.GAME_CHOOSE_SUIT, (cards: Array<Card>) => {
+      setCardChoices(cards)
+      setISModelOpen(true)
+    })
   }, [])
 
   // == Functions ============================
@@ -87,6 +96,11 @@ export default function (props: GameWindowProps) {
 
   function drawCard () {
     socket.emit(SocketEvent.GAME_DRAW_CARD)
+  }
+
+  function onChangeSuit (index: number) {
+    setISModelOpen(false)
+    socket.emit(SocketEvent.GAME_CHANGE_SUIT, cardChoices[index])
   }
 
   // == Template =============================
@@ -129,6 +143,14 @@ export default function (props: GameWindowProps) {
     case (GameState.STARTED): {
       return (
         <>
+          <SimpleDialog title='You have played a card that allows you to change the suit' isOpen={isModalOpen} onCancel={() => setISModelOpen(false)}>
+            <Typography variant='h6'>Please Choose a Suit</Typography>
+            <Stack sx={{ margin: '1rem', alignItems: 'center', flexDirection: 'column' }} spacing={1}>
+              {cardChoices.map((card, index) => (
+                <CardDisplay key={index} card={card} id={index} onSelect={onChangeSuit}/>
+              ))}
+            </Stack>
+          </SimpleDialog>
           <Grid item container md={9}>
             <GameInfoDisplay topCardOnDiscardPile={topDiscardedCard} remainingDeckCount={remainingDeckCount} players={players} />
           </Grid>

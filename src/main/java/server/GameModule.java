@@ -11,6 +11,8 @@ import org.springframework.stereotype.Component;
 import com.corundumstudio.socketio.SocketIOServer;
 import com.corundumstudio.socketio.listener.DataListener;
 import config.GameConfig;
+import constant.CardColor;
+import constant.CardSuit;
 import constant.CardValue;
 import constant.SocketEvent;
 import lombok.Getter;
@@ -49,6 +51,7 @@ public class GameModule {
     if (this.server != null) {
       server.addEventListener(SocketEvent.GAME_DISCARD_CARD, Card.class, playerDiscardCard());
       server.addEventListener(SocketEvent.GAME_DRAW_CARD, String.class, playerDrawCard());
+      server.addEventListener(SocketEvent.GAME_CHANGE_SUIT, Card.class, playerChangeSuit());
     }
   }
 
@@ -230,18 +233,28 @@ public class GameModule {
       UUID playerId = client.getSessionId();
       Player player = players.get(playerId);
 
-      if (player != null) {
-        log.info("receive card to discard {}", cardToDiscard);
+      log.info("receive card to discard {}", cardToDiscard);
 
-        player.getCardsHeld().remove(cardToDiscard);
-        player.setDiscardCardCount(player.getDiscardCardCount() + 1);
-        client.sendEvent(SocketEvent.MESSAGE, "You have discarded a %s".formatted(cardToDiscard));
-        client.sendEvent(SocketEvent.GAME_UPDATE_CARDS, player.getCardsHeld());
+      player.getCardsHeld().remove(cardToDiscard);
+      player.setDiscardCardCount(player.getDiscardCardCount() + 1);
+      client.sendEvent(SocketEvent.MESSAGE, "You have discarded a %s".formatted(cardToDiscard));
+      client.sendEvent(SocketEvent.GAME_UPDATE_CARDS, player.getCardsHeld());
 
+      if (cardToDiscard.getValue().equals(CardValue.EIGHT)) {
+        client.sendEvent(SocketEvent.GAME_CHOOSE_SUIT, new ArrayList<Card>(){{
+          add(new Card(CardSuit.CLUBS, CardValue.EIGHT, CardColor.BLACK, true));
+          add(new Card(CardSuit.SPADES, CardValue.EIGHT, CardColor.BLACK, true));
+          add(new Card(CardSuit.DIAMONDS, CardValue.EIGHT, CardColor.RED, true));
+          add(new Card(CardSuit.HEARTS, CardValue.EIGHT, CardColor.RED, true));
+        }});
+
+        log.info("request sent to player to choose suit");
+
+      } else {
         discardPile.push(cardToDiscard);
         server.getRoomOperations(GameConfig.GAME_ROOM).sendEvent(SocketEvent.GAME_UPDATE_DISCARD_PILE, cardToDiscard);
         server.getRoomOperations(GameConfig.GAME_ROOM).sendEvent(SocketEvent.GAME_UPDATE_REMAINING_DECK, deck.size());
-
+  
         updateCardsOnPlayersHand();
         handlePostPlayerActions();
       }
@@ -261,6 +274,20 @@ public class GameModule {
       player.setDrawnCardCount(player.getDrawnCardCount() + 1);
       client.sendEvent(SocketEvent.GAME_UPDATE_CARDS, player.getCardsHeld());
       client.sendEvent(SocketEvent.MESSAGE, "You have drawn a %s".formatted(card));
+      server.getRoomOperations(GameConfig.GAME_ROOM).sendEvent(SocketEvent.GAME_UPDATE_REMAINING_DECK, deck.size());
+
+      handlePostPlayerActions();
+    };
+  }
+
+  private DataListener<Card> playerChangeSuit () {
+    return (client, card, ackSender) -> {
+      UUID playerId = client.getSessionId();
+      Player player = players.get(playerId);
+
+      discardPile.push(card);
+      server.getRoomOperations(GameConfig.GAME_ROOM).sendEvent(SocketEvent.MESSAGE, "%s has changed the card on the discard pile to %s".formatted(player.getName(), card));
+      server.getRoomOperations(GameConfig.GAME_ROOM).sendEvent(SocketEvent.GAME_UPDATE_DISCARD_PILE, card);
       server.getRoomOperations(GameConfig.GAME_ROOM).sendEvent(SocketEvent.GAME_UPDATE_REMAINING_DECK, deck.size());
 
       handlePostPlayerActions();
