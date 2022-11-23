@@ -71,11 +71,12 @@ public class GameModule {
     log.info("Game has started");
     server.getRoomOperations(GameConfig.GAME_ROOM).sendEvent(SocketEvent.MESSAGE, "Game started");
     server.getRoomOperations(GameConfig.GAME_ROOM).sendEvent(SocketEvent.GAME_START);
-
     deck = GameUtil.shuffleAndBuildCardsStack();
-
+    
     dealCardsToPlayer();
     drawFirstCardForDiscardPle();
+
+    server.getRoomOperations(GameConfig.GAME_ROOM).sendEvent(SocketEvent.GAME_UPDATE_PLAYERS_INFO, players.values());
 
     currentPlayer = playerOrder.get(0);
     orderReversed = false;
@@ -95,6 +96,8 @@ public class GameModule {
       player.setScore(newScore);
       server.getClient(id).sendEvent(SocketEvent.MESSAGE, "Your score have been updated by %d".formatted(delta));
     });
+
+    server.getRoomOperations(GameConfig.GAME_ROOM).sendEvent(SocketEvent.GAME_UPDATE_PLAYERS_INFO, players.values());
   }
 
   // == Private Method =======================

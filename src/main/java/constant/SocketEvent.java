@@ -14,4 +14,5 @@ public class SocketEvent {
   public static final String GAME_START_PLAYER_TURN = "game-start-player-turn";
   public static final String GAME_END_PLAYER_TURN = "game-end-player-turn";
   public static final String GAME_DRAW_CARD = "game-draw-card";
+  public static final String GAME_UPDATE_PLAYERS_INFO = "game-update-player-info";
 }

@@ -12,5 +12,6 @@ export enum SocketEvent {
   GAME_UPDATE_REMAINING_DECK = 'game-update-remaining-deck',
   GAME_START_PLAYER_TURN = 'game-start-player-turn',
   GAME_END_PLAYER_TURN = 'game-end-player-turn',
-  GAME_DRAW_CARD = 'game-draw-card'
+  GAME_DRAW_CARD = 'game-draw-card',
+  GAME_UPDATE_PLAYERS_INFO = 'game-update-player-info'
 }
