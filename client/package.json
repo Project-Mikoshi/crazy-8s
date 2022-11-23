@@ -11,8 +11,9 @@
   "devDependencies": {
     "@emotion/react": "^11.10.5",
     "@emotion/styled": "^11.10.5",
+    "@mikoshi/application-components": "^0.7.0",
+    "@mikoshi/core-components": "^0.9.0",
     "@mikoshi/styles": "0.7.0",
-    "react-perfect-scrollbar": "^1.5.8",
     "@mui/icons-material": "^5.10.14",
     "@mui/material": "^5.10.14",
     "@types/node": "^18.6.4",

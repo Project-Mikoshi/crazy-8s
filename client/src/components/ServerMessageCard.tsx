@@ -1,5 +1,5 @@
 import React from 'react'
-import PerfectScrollbar from 'react-perfect-scrollbar'
+import { Scroll } from '@mikoshi/core-components'
 import { Card, CardContent, Divider, Stack, Typography } from '@mui/material'
 
 interface MessageBoxProps {
@@ -25,11 +25,11 @@ export default function (props: MessageBoxProps) {
         <Typography variant='h4'>Server Messages</Typography>
         <Divider>logs</Divider>
         <Stack direction='column' spacing={1} sx={{ maxHeight: '275px' }}>
-          <PerfectScrollbar>
+          <Scroll>
             {messages.map((message, index) => (
               <Typography variant='body1' key={index}>{message}</Typography>
             ))}
-          </PerfectScrollbar>
+          </Scroll>
         </Stack>
       </CardContent>
     </Card>
