@@ -4,3 +4,8 @@ export enum GameState {
   WAITING = 'waiting',
   STARTED = 'started'
 }
+
+export enum Direction {
+  REVERSE = 'reverse',
+  NORMAL = 'normal'
+}

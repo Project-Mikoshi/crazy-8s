@@ -1,5 +1,7 @@
 import React from 'react'
 import AccountCircleRoundedIcon from '@mui/icons-material/AccountCircleRounded'
+import KeyboardDoubleArrowRightIcon from '@mui/icons-material/KeyboardDoubleArrowRight'
+import KeyboardDoubleArrowLeftIcon from '@mui/icons-material/KeyboardDoubleArrowLeft'
 import {
   Typography,
   CardMedia,
@@ -16,16 +18,18 @@ import {
 import CardDisplay from '@/components/CardDisplay'
 import { Card } from '@/types/card'
 import { Player } from '@/types/player'
+import { Direction } from '@/types/game'
 
 interface DeckDisplayProps {
   players: Array<Player>,
   remainingDeckCount: number,
+  direction?: Direction,
   topCardOnDiscardPile?: Card
 }
 
 export default function (props: DeckDisplayProps) {
   // == Props ================================
-  const { remainingDeckCount, topCardOnDiscardPile, players } = props
+  const { remainingDeckCount, topCardOnDiscardPile, players, direction } = props
 
   // == States ===============================
 
@@ -49,11 +53,19 @@ export default function (props: DeckDisplayProps) {
                 <ListItemText primary={player.name} secondary={<Typography color='primary' fontWeight={600}>{player.score}</Typography>} />
               </ListItem>
             ))}
+
+            <ListItem>
+              <ListItemIcon>
+                {direction === Direction.NORMAL && <KeyboardDoubleArrowRightIcon />}
+                {direction === Direction.REVERSE && <KeyboardDoubleArrowLeftIcon />}
+              </ListItemIcon>
+              <ListItemText primary='Playing Direction' secondary={<Typography color='primary' fontWeight={600}>{direction}</Typography>} />
+            </ListItem>
           </List>
         </Box>
       </Grid>
 
-      <Grid item xs={6}>
+      <Grid item xs={8}>
         <Stack sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }} spacing={2}>
           <Divider flexItem>
             <Typography>Top of Discarded Pile</Typography>

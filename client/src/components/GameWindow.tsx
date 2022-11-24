@@ -6,7 +6,7 @@ import PlayerActionDisplay from '@/components/PlayerActionDisplay'
 import GameInfoDisplay from '@/components/GameInfoDisplay'
 import CardDisplay from '@/components/CardDisplay'
 import { Card } from '@/types/card'
-import { GameState } from '@/types/game'
+import { Direction, GameState } from '@/types/game'
 import { SocketEvent } from '@/types/api'
 import { Player } from '@/types/player'
 
@@ -29,6 +29,7 @@ export default function (props: GameWindowProps) {
   const [serverMessages, setServerMessages] = useState<Array<string>>([])
   const [isModalOpen, setISModelOpen] = useState(false)
   const [cardChoices, setCardChoices] = useState<Array<Card>>([])
+  const [directionOfPlay, setDirectionOfPlay] = useState<Direction>()
 
   // == Lifecycle ============================
   useEffect(() => {
@@ -76,6 +77,10 @@ export default function (props: GameWindowProps) {
     socket.on(SocketEvent.GAME_CHOOSE_SUIT, (cards: Array<Card>) => {
       setCardChoices(cards)
       setISModelOpen(true)
+    })
+
+    socket.on(SocketEvent.GAME_CHANGE_DIRECTION_OF_PLAY, (direction: Direction) => {
+      setDirectionOfPlay(direction)
     })
   }, [])
 
@@ -152,7 +157,7 @@ export default function (props: GameWindowProps) {
             </Stack>
           </SimpleDialog>
           <Grid item container md={9}>
-            <GameInfoDisplay topCardOnDiscardPile={topDiscardedCard} remainingDeckCount={remainingDeckCount} players={players} />
+            <GameInfoDisplay topCardOnDiscardPile={topDiscardedCard} remainingDeckCount={remainingDeckCount} players={players} direction={directionOfPlay} />
           </Grid>
           <Grid item container md={3}>
             <ServerMessageCard messages={serverMessages} />
