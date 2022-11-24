@@ -36,7 +36,7 @@ export default function (props: PlayerDisplayProps) {
   return (
     <Grid container spacing={2}>
       <Grid item xs={12}>
-        <Typography variant='h4' color='primary'>{playerName}</Typography>
+        <Typography variant='h4' color='primary' data-testid='user-name-display-text'>{playerName}</Typography>
         {!isPlaying && (
           <Typography variant='subtitle1' color='warning' data-testid='user-status-waiting'>You must wait for other player to finish their turn</Typography>
         )}

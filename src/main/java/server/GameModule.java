@@ -110,6 +110,16 @@ public class GameModule {
     server.getRoomOperations(GameConfig.GAME_ROOM).sendEvent(SocketEvent.GAME_UPDATE_PLAYERS_INFO, players.values());
   }
 
+  public void updateCardsOnPlayersHand () {
+    players.forEach((id, player) -> {
+      player.getCardsHeld().forEach(card -> {
+        card.setIsPlayable(GameUtil.doesTwoCardsMatch(card, discardPile.peek()));
+      });
+
+      server.getClient(id).sendEvent(SocketEvent.GAME_UPDATE_CARDS, player.getCardsHeld());
+    });
+  }
+
   // == Private Method =======================
   private void dealCardsToPlayer () {
     players.forEach((id, player) -> {
@@ -151,16 +161,6 @@ public class GameModule {
     }
 
     return deck.pop();
-  }
-
-  private void updateCardsOnPlayersHand () {
-    players.forEach((id, player) -> {
-      player.getCardsHeld().forEach(card -> {
-        card.setIsPlayable(GameUtil.doesTwoCardsMatch(card, discardPile.peek()));
-      });
-
-      server.getClient(id).sendEvent(SocketEvent.GAME_UPDATE_CARDS, player.getCardsHeld());
-    });
   }
 
   private void promptPlayerToStart () {

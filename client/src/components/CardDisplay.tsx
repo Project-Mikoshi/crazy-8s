@@ -64,7 +64,7 @@ export default function (props: CardDisplayProps) {
       fillOpacity={fillOpacity}
       role='button'
       onClick={handleClick}
-      data-testid={`${card.value}-${card.suit}`}
+      data-testid={`${card.value}-${card.suit}-${playable ? 'enabled' : 'disabled'}`}
     >
       <g>
         <path

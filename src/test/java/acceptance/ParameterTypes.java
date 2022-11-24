@@ -49,4 +49,14 @@ public class ParameterTypes {
 
     return directionMap.get(direction);
   }
+
+  @ParameterType(".*")
+  public boolean Outcome (String outcome) {
+    HashMap<String, Boolean> directionMap = new HashMap<>(){{
+      put("success", true);
+      put("failure", false);
+    }};
+
+    return directionMap.get(outcome);
+  }
 }

@@ -5,7 +5,6 @@ import { AppBar, Grid, Toolbar, Typography } from '@mui/material'
 import { SOCKET_SERVER_ADDRESS } from '@/constants/network'
 import { SocketEvent } from '@/types/api'
 import GameWindow from '@/components/GameWindow'
-import ParticleEffectBackground from '@/components/ParticleEffectBackground'
 import './styles.scss'
 
 export default function App () {
@@ -51,7 +50,6 @@ export default function App () {
           </Typography>
         </Toolbar>
       </AppBar>
-      <ParticleEffectBackground />
       <div className='outlet'>
         <Grid container justifyContent='center' alignItems='center' height='100%' width='100%' padding={5}>
           {!isConnected && (
