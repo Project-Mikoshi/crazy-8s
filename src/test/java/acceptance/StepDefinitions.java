@@ -22,6 +22,7 @@ import io.cucumber.java.en.*;
 import io.cucumber.spring.CucumberContextConfiguration;
 import io.github.bonigarcia.wdm.WebDriverManager;
 import constant.CardColor;
+import constant.CardValue;
 import model.Card;
 import server.GameModule;
 import server.ServerApplication;
@@ -51,7 +52,7 @@ public class StepDefinitions {
   public void setup () {
     game.reset();
     driverOptions = new ChromeOptions();
-    // driverOptions.setHeadless(true);
+    driverOptions.setHeadless(true);
     driverOptions.addArguments("window-size=3840,2160");
     driverOptions.setImplicitWaitTimeout(Duration.ofSeconds(5));
     driverOptions.setPageLoadTimeout(Duration.ofSeconds(5));
@@ -90,8 +91,6 @@ public class StepDefinitions {
     WebDriver driver = drivers.get(id);
     WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
 
-    By cardSelector = By.cssSelector("[data-testid='%s-%s-enabled']".formatted(cardValue, cardSuit));
-
     wait.until(ExpectedConditions.presenceOfElementLocated(USER_NAME_DISPLAY_TEXT));
 
     UUID playerId = game.getCurrentPlayer();
@@ -105,9 +104,17 @@ public class StepDefinitions {
     game.updateCardsOnPlayersHand();
 
     if (isSuccessful) {
+      By cardSelector = By.cssSelector("[data-testid='%s-%s-enabled']".formatted(cardValue, cardSuit));
       wait.until(ExpectedConditions.presenceOfElementLocated(cardSelector));
       driver.findElement(cardSelector).click();
-      wait.until(ExpectedConditions.presenceOfElementLocated(USER_STATUS_WAITING));
+
+      if (!cardValue.equalsIgnoreCase(CardValue.EIGHT)) {
+        wait.until(ExpectedConditions.presenceOfElementLocated(USER_STATUS_WAITING));
+      }
+    } else {
+      By cardSelector = By.cssSelector("[data-testid='%s-%s-disabled']".formatted(cardValue, cardSuit));
+      wait.until(ExpectedConditions.presenceOfElementLocated(cardSelector));
+      Assertions.assertNotNull(driver.findElement(cardSelector));
     }
   }
   
