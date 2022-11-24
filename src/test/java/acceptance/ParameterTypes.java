@@ -39,4 +39,14 @@ public class ParameterTypes {
     
     return cardValueMap.get(suit);
   }
+
+  @ParameterType(".*")
+  public String Direction (String direction) {
+    HashMap<String, String> directionMap = new HashMap<>(){{
+      put("normal", Direction.NORMAL);
+      put("opposite", Direction.REVERSE);
+    }};
+
+    return directionMap.get(direction);
+  }
 }

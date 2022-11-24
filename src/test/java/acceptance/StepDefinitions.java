@@ -110,6 +110,16 @@ public class StepDefinitions {
     Assertions.assertNotNull(playerStatusText);
   }
 
+  @Then("game is playing in {Direction} direction")
+  public void checkGameDirection (String direction) {
+    drivers.forEach((id, driver) -> {
+      WebElement directionText = driver.findElement(By.cssSelector("[data-testid='game-status-direction'"));
+
+      Assertions.assertNotNull(directionText);
+      Assertions.assertTrue(directionText.getText().equalsIgnoreCase(direction));
+    });
+  }
+
   @Then("test finished")
   public void teardown () {
     drivers.forEach((id, driver) -> {
