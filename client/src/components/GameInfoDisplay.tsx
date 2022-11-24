@@ -59,7 +59,13 @@ export default function (props: DeckDisplayProps) {
                 {direction === Direction.NORMAL && <KeyboardDoubleArrowRightIcon />}
                 {direction === Direction.REVERSE && <KeyboardDoubleArrowLeftIcon />}
               </ListItemIcon>
-              <ListItemText primary='Playing Direction' secondary={<Typography color='primary' fontWeight={600}>{direction}</Typography>} />
+              <ListItemText
+                primary='Playing Direction'
+                secondary={
+                  <Typography color='primary' fontWeight={600} data-testid='game-status-direction'>
+                    {direction}
+                  </Typography>}
+              />
             </ListItem>
           </List>
         </Box>

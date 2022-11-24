@@ -14,6 +14,7 @@ import config.GameConfig;
 import constant.CardColor;
 import constant.CardSuit;
 import constant.CardValue;
+import constant.Direction;
 import constant.SocketEvent;
 import lombok.Getter;
 import lombok.Setter;
@@ -70,6 +71,11 @@ public class GameModule {
     return players.size() == GameConfig.NUM_OF_PLAYERS;
   }
 
+  public void reset () {
+    players.clear();
+    playerOrder.clear();
+  }
+
   public void beginNewRound () {
     log.info("Game has started");
     server.getRoomOperations(GameConfig.GAME_ROOM).sendEvent(SocketEvent.MESSAGE, "Game started");
@@ -83,7 +89,7 @@ public class GameModule {
 
     currentPlayer = playerOrder.get(0);
     orderReversed = false;
-    server.getRoomOperations(GameConfig.GAME_ROOM).sendEvent(SocketEvent.GAME_CHANGE_DIRECTION_OF_PLAY, "normal");
+    server.getRoomOperations(GameConfig.GAME_ROOM).sendEvent(SocketEvent.GAME_CHANGE_DIRECTION_OF_PLAY, Direction.NORMAL);
 
     promptPlayerToStart();
   }
@@ -179,7 +185,7 @@ public class GameModule {
 
     if (discardPile.peek().getValue().equals(CardValue.A)) {
       orderReversed = !orderReversed;
-      server.getRoomOperations(GameConfig.GAME_ROOM).sendEvent(SocketEvent.GAME_CHANGE_DIRECTION_OF_PLAY, orderReversed ? "reverse" : "normal");
+      server.getRoomOperations(GameConfig.GAME_ROOM).sendEvent(SocketEvent.GAME_CHANGE_DIRECTION_OF_PLAY, orderReversed ? Direction.REVERSE : Direction.NORMAL);
       server.getRoomOperations(GameConfig.GAME_ROOM).sendEvent(SocketEvent.MESSAGE, "Direction reversed!");
     }
 

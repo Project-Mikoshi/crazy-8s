@@ -58,7 +58,14 @@ export default function (props: CardDisplayProps) {
 
   // == Template =============================
   return (
-    <svg className={`card-display-svg ${!playable ? 'disabled' : ''}`} viewBox='0 0 200 250' fillOpacity={fillOpacity} role='button' onClick={handleClick}>
+    <svg
+      className={`card-display-svg ${!playable ? 'disabled' : ''}`}
+      viewBox='0 0 200 250'
+      fillOpacity={fillOpacity}
+      role='button'
+      onClick={handleClick}
+      data-testid={`${card.value}-${card.suit}`}
+    >
       <g>
         <path
           fill={fillColor}

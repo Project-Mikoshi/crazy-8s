@@ -9,7 +9,7 @@ import constant.CardValue;
 import model.Card;
 
 public class GameConfig {
-  public static final int NUM_OF_PLAYERS = 3;
+  public static final int NUM_OF_PLAYERS = 4;
 
   public static final int NUM_OF_INITIAL_CARDS = 5;
 
