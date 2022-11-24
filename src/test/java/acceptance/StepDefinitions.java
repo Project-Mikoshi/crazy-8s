@@ -54,7 +54,8 @@ public class StepDefinitions {
     game.reset();
     driverOptions = new ChromeOptions();
     driverOptions.setHeadless(true);
-    driverOptions.addArguments("window-size=3840,2160");
+    driverOptions.addArguments("--disable-gpu");
+    driverOptions.addArguments("--window-size=3840,2160");
     driverOptions.setImplicitWaitTimeout(Duration.ofSeconds(5));
     driverOptions.setPageLoadTimeout(Duration.ofSeconds(5));
   }
