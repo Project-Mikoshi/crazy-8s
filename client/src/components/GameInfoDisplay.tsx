@@ -1,5 +1,5 @@
 import React from 'react'
-import DirectionsRunRoundedIcon from '@mui/icons-material/DirectionsRunRounded'
+import AccountCircleRoundedIcon from '@mui/icons-material/AccountCircleRounded'
 import {
   Typography,
   CardMedia,
@@ -44,9 +44,9 @@ export default function (props: DeckDisplayProps) {
             {players.map(player => (
               <ListItem key={player.id}>
                 <ListItemIcon>
-                  <DirectionsRunRoundedIcon />
+                  <AccountCircleRoundedIcon color='primary' />
                 </ListItemIcon>
-                <ListItemText primary={player.name} secondary={player.score} />
+                <ListItemText primary={player.name} secondary={<Typography color='primary' fontWeight={600}>{player.score}</Typography>} />
               </ListItem>
             ))}
           </List>

@@ -26,7 +26,7 @@ export default function (props: MessageBoxProps) {
         <Divider>logs</Divider>
         <Stack direction='column' spacing={1} sx={{ maxHeight: '275px' }}>
           <Scroll>
-            {messages.map((message, index) => (
+            {[...messages].reverse().map((message, index) => (
               <Typography variant='body1' key={index}>{message}</Typography>
             ))}
           </Scroll>
