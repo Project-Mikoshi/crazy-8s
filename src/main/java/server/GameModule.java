@@ -83,6 +83,7 @@ public class GameModule {
 
     currentPlayer = playerOrder.get(0);
     orderReversed = false;
+    server.getRoomOperations(GameConfig.GAME_ROOM).sendEvent(SocketEvent.GAME_CHANGE_DIRECTION_OF_PLAY, "normal");
 
     promptPlayerToStart();
   }
@@ -178,6 +179,7 @@ public class GameModule {
 
     if (discardPile.peek().getValue().equals(CardValue.A)) {
       orderReversed = !orderReversed;
+      server.getRoomOperations(GameConfig.GAME_ROOM).sendEvent(SocketEvent.GAME_CHANGE_DIRECTION_OF_PLAY, orderReversed ? "reverse" : "normal");
       server.getRoomOperations(GameConfig.GAME_ROOM).sendEvent(SocketEvent.MESSAGE, "Direction reversed!");
     }
 
