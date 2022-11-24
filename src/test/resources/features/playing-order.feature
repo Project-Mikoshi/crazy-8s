@@ -16,3 +16,8 @@ Feature: playing-order
     When player 4 plays 7-H
     Then next player is player 3
     Then test finished
+
+  Scenario: 44
+    When player 1 plays Q-C
+    Then next player is player 3
+    Then test finished
