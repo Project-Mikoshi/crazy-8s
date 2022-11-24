@@ -37,6 +37,7 @@ public class StepDefinitions {
   private static final By USER_STATUS_PLAYING = By.cssSelector("[data-testid='user-status-playing']");
   private static final By USER_STATUS_WAITING = By.cssSelector("[data-testid='user-status-waiting']");
   private static final By USER_NAME_DISPLAY_TEXT = By.cssSelector("[data-testid='user-name-display-text'");
+  private static final By MODAL_CHOOSE_SUIT_PROMPT = By.cssSelector("[data-testid='modal-choose-suit-prompt'");
 
   // == Props ================================
   @Autowired GameModule game;
@@ -152,6 +153,14 @@ public class StepDefinitions {
       Assertions.assertNotNull(directionText);
       Assertions.assertTrue(directionText.getText().equalsIgnoreCase(direction));
     });
+  }
+
+  @Then("player {int} is prompted to chose a suit")
+  public void checkForModalPrompt (int id) {
+    WebDriver driver = drivers.get(id);
+    WebElement modal = driver.findElement(MODAL_CHOOSE_SUIT_PROMPT);
+
+    Assertions.assertNotNull(modal);
   }
 
   @Then("top of discard pile is now {CardValue}-{CardSuit}")

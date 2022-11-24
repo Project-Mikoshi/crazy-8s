@@ -13,3 +13,8 @@ Feature: card-playability
     Given top card is K-C
     When player 1 try to play 7-C with success
     Then top of discard pile is now 7-C
+
+  Scenario: 53
+    Given top card is K-C
+    When player 1 try to play 8-H with success
+    Then player 1 is prompted to chose a suit
