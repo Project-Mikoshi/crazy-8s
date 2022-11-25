@@ -44,6 +44,14 @@ public class GameUtil {
   }
 
   public static boolean shouldDrawAbilityBeDisabled (Player player, Card cardFreshlyDrawn, Card cardOnTopOfDiscardPile) {
+    if (doesTwoCardsMatch(cardFreshlyDrawn, cardOnTopOfDiscardPile)) {
+      return true;
+    }
+
+    if (player.getDrawnCardCount() == GameConfig.MAX_DRAW_PER_TURN) {
+      return true;
+    }
+
     return false;
   }
 }
