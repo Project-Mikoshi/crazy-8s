@@ -33,3 +33,15 @@ Feature: card-playability
     Then player 1 must draw
     When player 1 draw and get 7-H
     Then player 1 must play a card
+
+  Scenario: 61
+    Given top card is 7-C
+    When player 1 has following cards:
+      |3-H|
+    Then player 1 must draw
+    When player 1 draw and get 6-D
+    Then player 1 must draw
+    When player 1 draw and get 5-S
+    Then player 1 must draw
+    When player 1 draw and get 4-H
+    Then player 1 turn ended
