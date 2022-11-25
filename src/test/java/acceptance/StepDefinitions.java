@@ -222,7 +222,6 @@ public class StepDefinitions {
   public void checkPlayerTurnEnded (int id) {
     WebDriver driver = drivers.get(id);
 
-    Assertions.assertTrue(driver.findElements(USER_STATUS_PLAYING).isEmpty());
     Assertions.assertNotNull(driver.findElement(USER_STATUS_WAITING));
   }
 }

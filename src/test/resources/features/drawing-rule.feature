@@ -57,3 +57,13 @@ Feature: card-playability
     Then player 1 must play a card
     When player 1 try to play 8-H with success
     Then player 1 is prompted to chose a suit
+
+  Scenario: 62
+    Given top card is 7-C
+    When player 1 has following cards:
+      |3-C|
+      |K-S|
+    When player 1 draw and get 6-C
+    Then player 1 must play a card
+    When player 1 try to play 6-C with success
+    Then player 1 turn ended
