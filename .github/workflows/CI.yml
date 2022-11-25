@@ -19,5 +19,3 @@ jobs:
         java-version: '17'
         distribution: 'microsoft'
         cache: maven
-    - name: Test Spring Boot
-      run: mvn spring-boot:start spring-boot:stop
