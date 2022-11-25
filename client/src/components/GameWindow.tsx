@@ -30,6 +30,7 @@ export default function (props: GameWindowProps) {
   const [isModalOpen, setISModelOpen] = useState(false)
   const [cardChoices, setCardChoices] = useState<Array<Card>>([])
   const [directionOfPlay, setDirectionOfPlay] = useState<Direction>()
+  const [isAbleToDraw, setIsAbleToDraw] = useState(false)
 
   // == Lifecycle ============================
   useEffect(() => {
@@ -81,6 +82,10 @@ export default function (props: GameWindowProps) {
 
     socket.on(SocketEvent.GAME_CHANGE_DIRECTION_OF_PLAY, (direction: Direction) => {
       setDirectionOfPlay(direction)
+    })
+
+    socket.on(SocketEvent.GAME_TOGGLE_PLAYER_DRAW_CARD_ABILITY, (ableToDraw: boolean) => {
+      setIsAbleToDraw(ableToDraw)
     })
   }, [])
 
@@ -163,7 +168,15 @@ export default function (props: GameWindowProps) {
             <ServerMessageCard messages={serverMessages} />
           </Grid>
           <Grid item container md={12}>
-            <PlayerActionDisplay deckCount={remainingDeckCount} isPlaying={isPlaying} cards={playerCards} playerName={playerName} onDiscardCard={discardCard} onDrawCard={drawCard} />
+            <PlayerActionDisplay
+              deckCount={remainingDeckCount}
+              isPlaying={isPlaying}
+              isAbleToDraw={isAbleToDraw}
+              cards={playerCards}
+              playerName={playerName}
+              onDiscardCard={discardCard}
+              onDrawCard={drawCard}
+            />
           </Grid>
         </>
       )

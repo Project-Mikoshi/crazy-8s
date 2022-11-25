@@ -18,4 +18,5 @@ public class SocketEvent {
   public static final String GAME_CHOOSE_SUIT = "game-choose-suit";
   public static final String GAME_CHANGE_SUIT = "game-change-suit";
   public static final String GAME_CHANGE_DIRECTION_OF_PLAY = "game-change-direction-of-play";
+  public static final String GAME_TOGGLE_PLAYER_DRAW_CARD_ABILITY = "game-toggle-player-draw-card-ability";
 }

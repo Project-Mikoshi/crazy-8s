@@ -16,5 +16,6 @@ export enum SocketEvent {
   GAME_UPDATE_PLAYERS_INFO = 'game-update-player-info',
   GAME_CHOOSE_SUIT = 'game-choose-suit',
   GAME_CHANGE_SUIT = 'game-change-suit',
-  GAME_CHANGE_DIRECTION_OF_PLAY = 'game-change-direction-of-play'
+  GAME_CHANGE_DIRECTION_OF_PLAY = 'game-change-direction-of-play',
+  GAME_TOGGLE_PLAYER_DRAW_CARD_ABILITY = 'game-toggle-player-draw-card-ability'
 }

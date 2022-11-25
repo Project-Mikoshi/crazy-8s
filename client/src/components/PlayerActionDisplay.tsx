@@ -7,6 +7,7 @@ import { Card } from '@/types/card'
 
 interface PlayerDisplayProps {
   isPlaying: boolean,
+  isAbleToDraw: boolean,
   cards: Array<Card>,
   playerName: string,
   deckCount: number,
@@ -16,10 +17,9 @@ interface PlayerDisplayProps {
 
 export default function (props: PlayerDisplayProps) {
   // == Props ================================
-  const { cards, deckCount, playerName, onDiscardCard, isPlaying, onDrawCard } = props
+  const { cards, deckCount, playerName, onDiscardCard, isPlaying, onDrawCard, isAbleToDraw } = props
 
   // == Computed Props =======================
-  const noCardToPlay = cards.every(card => !card.isPlayable)
 
   // == States ===============================
 
@@ -55,7 +55,7 @@ export default function (props: PlayerDisplayProps) {
         </Scroll>
       </Grid>
 
-      {isPlaying && noCardToPlay && deckCount > 0 && (
+      {isPlaying && isAbleToDraw && deckCount > 0 && (
         <Grid item xs={2} container justifyContent='center' alignItems='center' flexDirection='column'>
           <Tooltip title='draw a new card from deck'>
             <Fab color='primary' onClick={onDrawCard} id='draw-card-button'>

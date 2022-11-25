@@ -174,6 +174,7 @@ public class GameModule {
       player.setDrawnCardCount(0);
       player.setDiscardCardCount(0);
       server.getClient(currentPlayer).sendEvent(SocketEvent.GAME_START_PLAYER_TURN);
+      server.getClient(currentPlayer).sendEvent(SocketEvent.GAME_TOGGLE_PLAYER_DRAW_CARD_ABILITY, true);
       server.getRoomOperations(GameConfig.GAME_ROOM).sendEvent(SocketEvent.MESSAGE, "%s is playing".formatted(player.getName()));
     }
   }
@@ -280,6 +281,11 @@ public class GameModule {
 
       player.getCardsHeld().add(card);
       player.setDrawnCardCount(player.getDrawnCardCount() + 1);
+
+      if (GameUtil.shouldDrawAbilityBeDisabled(player, card, discardPile.peek())) {
+        client.sendEvent(SocketEvent.GAME_TOGGLE_PLAYER_DRAW_CARD_ABILITY, false);
+      }
+
       client.sendEvent(SocketEvent.GAME_UPDATE_CARDS, player.getCardsHeld());
       client.sendEvent(SocketEvent.MESSAGE, "You have drawn a %s".formatted(card));
       server.getRoomOperations(GameConfig.GAME_ROOM).sendEvent(SocketEvent.GAME_UPDATE_REMAINING_DECK, deck.size());
