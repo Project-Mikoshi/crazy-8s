@@ -42,4 +42,8 @@ public class GameUtil {
   public static boolean playerHasPlayableCards (Player player) {
     return player.getCardsHeld().stream().anyMatch(card -> card.getIsPlayable());
   }
+
+  public static boolean shouldDrawAbilityBeDisabled (Player player, Card cardFreshlyDrawn, Card cardOnTopOfDiscardPile) {
+    return false;
+  }
 }

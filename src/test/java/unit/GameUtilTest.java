@@ -3,6 +3,7 @@ package unit;
 import java.util.ArrayList;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import config.GameConfig;
 import util.GameUtil;
 import constant.CardColor;
 import constant.CardSuit;
@@ -133,5 +134,30 @@ public class GameUtilTest {
       add(player2);
       add(player3);
     }}));
+  }
+
+  @Test
+  public void shouldReturnCorrectlyWhetherPlayerDrawAbilityBeDisabled () {
+    Card cardOnTopOfDiscardedPile = new Card(CardSuit.CLUBS, CardValue.TWO, CardColor.RED, true);
+    Card playableCard = new Card(CardSuit.CLUBS, CardValue.TWO, CardColor.RED, true);
+    Card nonPlayableCard = new Card(CardSuit.HEARTS, CardValue.THREE, CardColor.RED, false);
+
+    Player player = new Player(null, "test");
+
+    player.setCardsHeld(new ArrayList<>(){{
+      add(nonPlayableCard);
+      add(nonPlayableCard);
+    }});
+
+    Assertions.assertTrue(GameUtil.shouldDrawAbilityBeDisabled(player, playableCard, cardOnTopOfDiscardedPile));
+    Assertions.assertFalse(GameUtil.shouldDrawAbilityBeDisabled(player, nonPlayableCard, cardOnTopOfDiscardedPile));
+
+    player.setDrawnCardCount(GameConfig.MAX_DRAW_PER_TURN - 1);
+
+    Assertions.assertFalse(GameUtil.shouldDrawAbilityBeDisabled(player, nonPlayableCard, cardOnTopOfDiscardedPile));
+
+    player.setDrawnCardCount(GameConfig.MAX_DRAW_PER_TURN);
+
+    Assertions.assertTrue(GameUtil.shouldDrawAbilityBeDisabled(player, nonPlayableCard, cardOnTopOfDiscardedPile));
   }
 }
