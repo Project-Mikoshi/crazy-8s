@@ -19,7 +19,5 @@ jobs:
         java-version: '17'
         distribution: 'microsoft'
         cache: maven
-    - name: Install Dependencies
-      run: mvn clean install
     - name: Test Spring Boot
       run: mvn spring-boot:start spring-boot:stop
