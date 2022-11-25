@@ -58,7 +58,7 @@ export default function (props: PlayerDisplayProps) {
       {isPlaying && noCardToPlay && deckCount > 0 && (
         <Grid item xs={2} container justifyContent='center' alignItems='center' flexDirection='column'>
           <Tooltip title='draw a new card from deck'>
-            <Fab color='primary' onClick={onDrawCard}>
+            <Fab color='primary' onClick={onDrawCard} id='draw-card-button'>
               <HandIcon />
             </Fab>
           </Tooltip>

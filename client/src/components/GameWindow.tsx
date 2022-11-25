@@ -138,7 +138,7 @@ export default function (props: GameWindowProps) {
       return (
         <>
           <Grid item xs={12}>
-            <Typography variant='h6'>Waiting for more players to join</Typography>
+            <Typography variant='h6' data-testid='game-waiting-room-message'>Waiting for more players to join</Typography>
             <LinearProgress />
           </Grid>
         </>

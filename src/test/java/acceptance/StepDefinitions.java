@@ -3,6 +3,7 @@ package acceptance;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.UUID;
 import org.junit.jupiter.api.Assertions;
 import org.openqa.selenium.By;
@@ -34,6 +35,7 @@ public class StepDefinitions {
   private static final String HOST_NAME = "http://127.0.0.1";
   private static final By PLAYER_NAME_INPUT = By.id("player-name-input-box");
   private static final By JOIN_GAME_BUTTON = By.id("join-button");
+  private static final By DRAW_CARD_BUTTON = By.id("draw-card-button");
   private static final By USER_STATUS_PLAYING = By.cssSelector("[data-testid='user-status-playing']");
   private static final By USER_STATUS_WAITING = By.cssSelector("[data-testid='user-status-waiting']");
   private static final By USER_NAME_DISPLAY_TEXT = By.cssSelector("[data-testid='user-name-display-text'");
@@ -47,15 +49,13 @@ public class StepDefinitions {
   ChromeOptions driverOptions;
 
   HashMap<Integer, WebDriver> drivers;
+  HashMap<Integer, UUID> playerIds;
 
   // == Hooks ================================
   @Before
   public void setup () {
     game.reset();
     driverOptions = new ChromeOptions();
-    driverOptions.setHeadless(true);
-    driverOptions.addArguments("--disable-gpu");
-    driverOptions.addArguments("--window-size=3840,2160");
     driverOptions.setImplicitWaitTimeout(Duration.ofSeconds(5));
     driverOptions.setPageLoadTimeout(Duration.ofSeconds(5));
   }
@@ -95,7 +95,7 @@ public class StepDefinitions {
 
     wait.until(ExpectedConditions.presenceOfElementLocated(USER_NAME_DISPLAY_TEXT));
 
-    UUID playerId = game.getCurrentPlayer();
+    UUID playerId = playerIds.get(id);
     Card cardToPlay = new Card(cardSuit, cardValue, CardColor.BLACK, false);
     Card fillerCard = new Card("test", "test", CardColor.RED, false);
 
@@ -126,6 +126,31 @@ public class StepDefinitions {
     playerAttemptPlayCard(id, cardValue, cardSuit, true);
   }
 
+  @When("player {int} has following cards:")
+  public void playerHasCards (int id, List<String> cards) {
+    ArrayList<Card> playerCards = new ArrayList<>(){{
+      for (String card: cards) {
+        String value = card.split("-")[0];
+        String suit = card.split("-")[1];
+
+        add(new Card(ParameterTypes.CARD_SUIT_MAP.get(suit), ParameterTypes.CARD_VALUE_MAP.get(value), CardColor.RED, false));
+      }
+    }};
+
+    UUID playerId = playerIds.get(id);
+
+    game.getPlayers().get(playerId).setCardsHeld(playerCards);
+    game.updateCardsOnPlayersHand();
+  }
+  
+  @When("player {int} draw and get {CardValue}-{CardSuit}")
+  public void playerDrawAndHasCards (int id, String cardValue, String cardSuit) {
+    Card card = new Card(cardSuit, cardValue, CardColor.BLACK, false);
+    game.getDeck().push(card);
+    WebDriver driver = drivers.get(id);
+    driver.findElement(DRAW_CARD_BUTTON).click();
+  }
+
   // == Step Defs - And ======================
   @And("all player joined the game room and game started")
   public void joinGameRoom () {
@@ -135,6 +160,12 @@ public class StepDefinitions {
       WebElement joinButton = driver.findElement(JOIN_GAME_BUTTON);
       joinButton.click();
     });
+
+    playerIds = new HashMap<>(){{
+      drivers.forEach((id, driver) -> {
+        put(id, game.getPlayerOrder().get(id - 1));
+      });
+    }};
   }
 
   // == Step Defs - Then =====================
@@ -169,5 +200,29 @@ public class StepDefinitions {
     Card topCard = game.getDiscardPile().peek();
 
     Assertions.assertTrue(topCard.getSuit().equalsIgnoreCase(cardSuit) && topCard.getValue().equalsIgnoreCase(cardValue));
+  }
+
+  @Then("player {int} must draw")
+  public void checkDrawButton (int id) {
+    WebDriver driver = drivers.get(id);
+    WebElement drawButton = driver.findElement(DRAW_CARD_BUTTON);
+
+    Assertions.assertNotNull(drawButton);
+  }
+
+  @Then("player {int} must play a card")
+  public void checkPlayingCard (int id) {
+    WebDriver driver = drivers.get(id);
+
+    Assertions.assertNotNull(driver.findElement(USER_STATUS_PLAYING));
+    Assertions.assertTrue(driver.findElements(DRAW_CARD_BUTTON).isEmpty());
+  }
+
+  @Then("player {int} turn ended")
+  public void checkPlayerTurnEnded (int id) {
+    WebDriver driver = drivers.get(id);
+
+    Assertions.assertTrue(driver.findElements(USER_STATUS_PLAYING).isEmpty());
+    Assertions.assertNotNull(driver.findElement(USER_STATUS_WAITING));
   }
 }
