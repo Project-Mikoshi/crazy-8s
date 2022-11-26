@@ -81,3 +81,15 @@ Feature: playing-two
     And from existing cards, player 2 plays 4-C
     And from existing cards, player 2 plays 6-C
     Then player 2 turn ended
+
+  Scenario: 73
+    Given top card is 7-C
+    When player 1 try to play 2-C with success
+    Then top of discard pile is now 2-C
+    And player 2 has following cards:
+      |4-C|
+      |6-C|
+    And from existing cards, player 2 plays 4-C
+    And from existing cards, player 2 plays 6-C
+    Then player 2 turn ended
+    Then game round advanced to 2

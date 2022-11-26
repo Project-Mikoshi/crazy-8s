@@ -23,6 +23,7 @@ import io.cucumber.java.en.*;
 import io.cucumber.spring.CucumberContextConfiguration;
 import io.github.bonigarcia.wdm.WebDriverManager;
 import constant.CardColor;
+import constant.CardSuit;
 import constant.CardValue;
 import model.Card;
 import server.GameModule;
@@ -40,6 +41,8 @@ public class StepDefinitions {
   private static final By USER_STATUS_WAITING = By.cssSelector("[data-testid='user-status-waiting']");
   private static final By USER_NAME_DISPLAY_TEXT = By.cssSelector("[data-testid='user-name-display-text'");
   private static final By MODAL_CHOOSE_SUIT_PROMPT = By.cssSelector("[data-testid='modal-choose-suit-prompt'");
+  private static final By GAME_STATUS_DIRECTION = By.cssSelector("[data-testid='game-status-direction'");
+  private static final By GAME_STATUS_ROUND = By.cssSelector("[data-testid='game-status-round'");
 
   // == Props ================================
   @Autowired GameModule game;
@@ -97,7 +100,7 @@ public class StepDefinitions {
 
     UUID playerId = playerIds.get(id);
     Card cardToPlay = new Card(cardSuit, cardValue, CardColor.BLACK, false);
-    Card fillerCard = new Card("test", "test", CardColor.RED, false);
+    Card fillerCard = new Card(CardSuit.TEST, CardValue.TEST, CardColor.RED, false);
 
     game.getPlayers().get(playerId).setCardsHeld(new ArrayList<>(){{
       add(cardToPlay);
@@ -173,6 +176,8 @@ public class StepDefinitions {
       joinButton.click();
     });
 
+    while (game.getPlayers().size() != drivers.size()) {}
+
     playerIds = new HashMap<>(){{
       drivers.forEach((id, driver) -> {
         put(id, game.getPlayerOrder().get(id - 1));
@@ -192,7 +197,7 @@ public class StepDefinitions {
   @Then("game is playing in {Direction} direction")
   public void checkGameDirection (String direction) {
     drivers.forEach((id, driver) -> {
-      WebElement directionText = driver.findElement(By.cssSelector("[data-testid='game-status-direction'"));
+      WebElement directionText = driver.findElement(GAME_STATUS_DIRECTION);
 
       Assertions.assertNotNull(directionText);
       Assertions.assertTrue(directionText.getText().equalsIgnoreCase(direction));
@@ -235,5 +240,13 @@ public class StepDefinitions {
     WebDriver driver = drivers.get(id);
 
     Assertions.assertNotNull(driver.findElement(USER_STATUS_WAITING));
+  }
+
+  @Then("game round advanced to {int}")
+  public void checkGameRound (int round) {
+    drivers.forEach((id, driver) -> {
+      WebElement roundNumber = driver.findElement(GAME_STATUS_ROUND);
+      Assertions.assertTrue(roundNumber.getText().equalsIgnoreCase(String.valueOf(round)));
+    });
   }
 }
