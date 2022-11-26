@@ -2,6 +2,7 @@ import React from 'react'
 import AccountCircleRoundedIcon from '@mui/icons-material/AccountCircleRounded'
 import KeyboardDoubleArrowRightIcon from '@mui/icons-material/KeyboardDoubleArrowRight'
 import KeyboardDoubleArrowLeftIcon from '@mui/icons-material/KeyboardDoubleArrowLeft'
+import VideogameAssetIcon from '@mui/icons-material/VideogameAsset'
 import {
   Typography,
   CardMedia,
@@ -23,13 +24,15 @@ import { Direction } from '@/types/game'
 interface DeckDisplayProps {
   players: Array<Player>,
   remainingDeckCount: number,
+  round: number,
+  winner?: Player,
   direction?: Direction,
   topCardOnDiscardPile?: Card
 }
 
 export default function (props: DeckDisplayProps) {
   // == Props ================================
-  const { remainingDeckCount, topCardOnDiscardPile, players, direction } = props
+  const { remainingDeckCount, topCardOnDiscardPile, players, direction, round, winner } = props
 
   // == States ===============================
 
@@ -48,9 +51,13 @@ export default function (props: DeckDisplayProps) {
             {players.map(player => (
               <ListItem key={player.id}>
                 <ListItemIcon>
-                  <AccountCircleRoundedIcon color='primary' />
+                  <AccountCircleRoundedIcon />
                 </ListItemIcon>
-                <ListItemText primary={player.name} secondary={<Typography color='primary' fontWeight={600}>{player.score}</Typography>} />
+                <ListItemText primary={player.name} secondary={
+                  <Typography color='primary' fontWeight={600} data-testid={`player-score-${player.id}`}>
+                    {player.score}
+                  </Typography>}
+                />
               </ListItem>
             ))}
 
@@ -65,6 +72,28 @@ export default function (props: DeckDisplayProps) {
                   <Typography color='primary' fontWeight={600} data-testid='game-status-direction'>
                     {direction}
                   </Typography>}
+              />
+            </ListItem>
+
+            <ListItem>
+              <ListItemIcon>
+                <VideogameAssetIcon />
+              </ListItemIcon>
+              <ListItemText primary='Current Round' secondary={
+                <Typography color='primary' fontWeight={600} data-testid='game-status-round'>
+                  {round}
+                </Typography>}
+              />
+            </ListItem>
+
+            <ListItem>
+              <ListItemIcon>
+                <AccountCircleRoundedIcon />
+              </ListItemIcon>
+              <ListItemText primary='Winner' secondary={
+                <Typography color='primary' fontWeight={600} data-testid='game-status-winner'>
+                  {winner?.name}
+                </Typography>}
               />
             </ListItem>
           </List>

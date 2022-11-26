@@ -6,6 +6,8 @@ public class SocketEvent {
   public static final String DISCONNECT = "disconnect";
   public static final String GAME_JOIN = "game-join";
   public static final String GAME_START = "game-start";
+  public static final String GAME_DECLARE_WINNER = "game-declare-winner";
+  public static final String GAME_UPDATE_ROUND = "game-update-round";
   public static final String GAME_DEAL_CARDS = "game-deal-cards";
   public static final String GAME_DISCARD_CARD = "game-discard-card";
   public static final String GAME_UPDATE_CARDS = "game-update-cards";

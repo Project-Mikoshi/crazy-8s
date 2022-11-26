@@ -14,4 +14,5 @@ public class CardValue {
   public static final String JACK = "J";
   public static final String QUEEN = "Q";
   public static final String KING = "K";
+  public static final String TEST = "test";
 }

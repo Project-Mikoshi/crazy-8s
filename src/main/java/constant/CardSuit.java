@@ -5,4 +5,5 @@ public class CardSuit {
   public static final String HEARTS = "hearts";
   public static final String SPADES = "spades";
   public static final String DIAMONDS = "diamonds";
+  public static final String TEST = "test";
 }

@@ -5,6 +5,8 @@ export enum SocketEvent {
   DISCONNECT = 'disconnect',
   GAME_JOIN = 'game-join',
   GAME_START = 'game-start',
+  GAME_DECLARE_WINNER = 'game-declare-winner',
+  GAME_UPDATE_ROUND = 'game-update-round',
   GAME_DEAL_CARDS = 'game-deal-cards',
   GAME_DISCARD_CARD = 'game-discard-card',
   GAME_UPDATE_CARDS = 'game-update-cards',

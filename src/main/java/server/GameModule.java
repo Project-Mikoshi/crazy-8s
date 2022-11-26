@@ -37,6 +37,7 @@ public class GameModule {
   boolean orderReversed;
   Stack<Card> deck;
   Stack<Card> discardPile;
+  int roundNumber;
 
   // == Constructor ==========================
   @Autowired
@@ -49,6 +50,7 @@ public class GameModule {
     discardPile = new Stack<>();
     playerOrder = new ArrayList<>();
     orderReversed = false;
+    roundNumber = 0;
 
     if (this.server != null) {
       server.addEventListener(SocketEvent.GAME_DISCARD_CARD, Card.class, playerDiscardCard());
@@ -77,6 +79,7 @@ public class GameModule {
     playerOrder.clear();
     discardPile.clear();
     deck.clear();
+    roundNumber = 0;
   }
 
   public void beginNewRound () {
@@ -84,6 +87,9 @@ public class GameModule {
     server.getRoomOperations(GameConfig.GAME_ROOM).sendEvent(SocketEvent.MESSAGE, "Game started");
     server.getRoomOperations(GameConfig.GAME_ROOM).sendEvent(SocketEvent.GAME_START);
     deck = GameUtil.shuffleAndBuildCardsStack();
+    roundNumber++;
+
+    server.getRoomOperations(GameConfig.GAME_ROOM).sendEvent(SocketEvent.GAME_UPDATE_ROUND, roundNumber);
     
     dealCardsToPlayer();
     drawFirstCardForDiscardPle();

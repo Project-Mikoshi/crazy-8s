@@ -63,6 +63,7 @@ public class GameConfig {
     put(CardValue.QUEEN, 10);
     put(CardValue.KING, 10);
     put(CardValue.JACK, 10);
+    put(CardValue.TEST, 0);
   }};
 
   public static final ArrayList<Card> CARDS = new ArrayList<>(){{

@@ -31,6 +31,8 @@ export default function (props: GameWindowProps) {
   const [cardChoices, setCardChoices] = useState<Array<Card>>([])
   const [directionOfPlay, setDirectionOfPlay] = useState<Direction>()
   const [isAbleToDraw, setIsAbleToDraw] = useState(false)
+  const [round, setRound] = useState(1)
+  const [winner, setWinner] = useState<Player>()
 
   // == Lifecycle ============================
   useEffect(() => {
@@ -86,6 +88,14 @@ export default function (props: GameWindowProps) {
 
     socket.on(SocketEvent.GAME_TOGGLE_PLAYER_DRAW_CARD_ABILITY, (ableToDraw: boolean) => {
       setIsAbleToDraw(ableToDraw)
+    })
+
+    socket.on(SocketEvent.GAME_UPDATE_ROUND, (roundNumber: number) => {
+      setRound(roundNumber)
+    })
+
+    socket.on(SocketEvent.GAME_DECLARE_WINNER, (winner: Player) => {
+      setWinner(winner)
     })
   }, [])
 
@@ -162,7 +172,14 @@ export default function (props: GameWindowProps) {
             </Stack>
           </SimpleDialog>
           <Grid item container md={9}>
-            <GameInfoDisplay topCardOnDiscardPile={topDiscardedCard} remainingDeckCount={remainingDeckCount} players={players} direction={directionOfPlay} />
+            <GameInfoDisplay
+              topCardOnDiscardPile={topDiscardedCard}
+              remainingDeckCount={remainingDeckCount}
+              players={players}
+              direction={directionOfPlay}
+              winner={winner}
+              round={round}
+            />
           </Grid>
           <Grid item container md={3}>
             <ServerMessageCard messages={serverMessages} />
