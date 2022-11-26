@@ -97,7 +97,8 @@ public class GameModule {
 
     server.getRoomOperations(GameConfig.GAME_ROOM).sendEvent(SocketEvent.GAME_UPDATE_PLAYERS_INFO, players.values());
 
-    currentPlayer = playerOrder.get(0);
+    determineCurrentPlayerOnNewRound();
+
     orderReversed = false;
     server.getRoomOperations(GameConfig.GAME_ROOM).sendEvent(SocketEvent.GAME_CHANGE_DIRECTION_OF_PLAY, Direction.NORMAL);
 
@@ -244,6 +245,14 @@ public class GameModule {
     }
   }
 
+  private void determineCurrentPlayerOnNewRound () {
+    if (roundNumber <= players.size()) {
+      currentPlayer = playerOrder.get(roundNumber - 1);
+    } else {
+      currentPlayer = playerOrder.get(0);
+    }
+  }
+
   // == Event Handler ========================
   private DataListener<Card> playerDiscardCard () {
     return (client, cardToDiscard, ackSender) -> {
@@ -313,6 +322,7 @@ public class GameModule {
       server.getRoomOperations(GameConfig.GAME_ROOM).sendEvent(SocketEvent.GAME_UPDATE_DISCARD_PILE, card);
       server.getRoomOperations(GameConfig.GAME_ROOM).sendEvent(SocketEvent.GAME_UPDATE_REMAINING_DECK, deck.size());
 
+      updateCardsOnPlayersHand();
       handlePostPlayerActions();
     };
   }
