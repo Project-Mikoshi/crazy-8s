@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import com.corundumstudio.socketio.SocketIOClient;
 import com.corundumstudio.socketio.SocketIOServer;
 import com.corundumstudio.socketio.listener.DataListener;
 import config.GameConfig;
@@ -185,14 +186,11 @@ public class GameModule {
     server.getRoomOperations(GameConfig.GAME_ROOM).sendEvent(SocketEvent.MESSAGE, "%s has finished playing".formatted(player.getName()));
 
     if (discardPile.peek().getValue().equals(CardValue.A)) {
-      orderReversed = !orderReversed;
-      server.getRoomOperations(GameConfig.GAME_ROOM).sendEvent(SocketEvent.GAME_CHANGE_DIRECTION_OF_PLAY, orderReversed ? Direction.REVERSE : Direction.NORMAL);
-      server.getRoomOperations(GameConfig.GAME_ROOM).sendEvent(SocketEvent.MESSAGE, "Direction reversed!");
+      handleA();
     }
 
     if (discardPile.peek().getValue().equals(CardValue.QUEEN)) {
-      moveToNextPlayer();
-      server.getClient(currentPlayer).sendEvent(SocketEvent.MESSAGE, "Your turn has been skipped due to the action of previous player");
+      handleQueen();
     }
   }
 
@@ -203,36 +201,6 @@ public class GameModule {
       currentPlayer = currentPlayerIndex - 1 >= 0 ? playerOrder.get(currentPlayerIndex - 1) : playerOrder.get(playerOrder.size() - 1);
     } else {
       currentPlayer = currentPlayerIndex + 1 < playerOrder.size() ?  playerOrder.get(currentPlayerIndex + 1) : playerOrder.get(0);
-    }
-  }
-
-  private void handlePostPlayerActions () {
-    Player player = players.get(currentPlayer);
-
-    if (player.getCardsHeld().isEmpty()) {
-      endCurrentRound();
-      beginNewRound();
-      return;
-    }
-
-    if (deck.isEmpty() && !GameUtil.somePlayerHasPlayableCards(players.values())) {
-      endCurrentRound();
-      beginNewRound();
-      return;
-    }
-    
-    if (player.getDrawnCardCount() >= GameConfig.MAX_DRAW_PER_TURN && !GameUtil.playerHasPlayableCards(player)) {
-      endPlayerTurn();
-      moveToNextPlayer();
-      promptPlayerToStart();
-      return;
-    }
-
-    if (player.getDiscardCardCount() == 1) {
-      endPlayerTurn();
-      moveToNextPlayer();
-      promptPlayerToStart();
-      return;
     }
   }
 
@@ -250,15 +218,7 @@ public class GameModule {
       client.sendEvent(SocketEvent.GAME_UPDATE_CARDS, player.getCardsHeld());
 
       if (cardToDiscard.getValue().equals(CardValue.EIGHT)) {
-        client.sendEvent(SocketEvent.GAME_CHOOSE_SUIT, new ArrayList<Card>(){{
-          add(new Card(CardSuit.CLUBS, CardValue.EIGHT, CardColor.BLACK, true));
-          add(new Card(CardSuit.SPADES, CardValue.EIGHT, CardColor.BLACK, true));
-          add(new Card(CardSuit.DIAMONDS, CardValue.EIGHT, CardColor.RED, true));
-          add(new Card(CardSuit.HEARTS, CardValue.EIGHT, CardColor.RED, true));
-        }});
-
-        log.info("request sent to player to choose suit");
-
+        handleEight(client);
       } else {
         discardPile.push(cardToDiscard);
         server.getRoomOperations(GameConfig.GAME_ROOM).sendEvent(SocketEvent.GAME_UPDATE_DISCARD_PILE, cardToDiscard);
@@ -308,4 +268,57 @@ public class GameModule {
     };
   }
 
+  // == Action Handler =======================
+  private void handlePostPlayerActions () {
+    Player player = players.get(currentPlayer);
+
+    if (player.getCardsHeld().isEmpty()) {
+      endCurrentRound();
+      beginNewRound();
+      return;
+    }
+
+    if (deck.isEmpty() && !GameUtil.somePlayerHasPlayableCards(players.values())) {
+      endCurrentRound();
+      beginNewRound();
+      return;
+    }
+    
+    if (player.getDrawnCardCount() >= GameConfig.MAX_DRAW_PER_TURN && !GameUtil.playerHasPlayableCards(player)) {
+      endPlayerTurn();
+      moveToNextPlayer();
+      promptPlayerToStart();
+      return;
+    }
+
+    if (player.getDiscardCardCount() == 1) {
+      endPlayerTurn();
+      moveToNextPlayer();
+      promptPlayerToStart();
+      return;
+    }
+  }
+
+  // == Special Card Handler =================
+  private void handleQueen () {
+    moveToNextPlayer();
+    server.getClient(currentPlayer).sendEvent(SocketEvent.MESSAGE, "Your turn has been skipped due to the action of previous player");
+  }
+
+  private void handleA () {
+    orderReversed = !orderReversed;
+    server.getRoomOperations(GameConfig.GAME_ROOM).sendEvent(SocketEvent.GAME_CHANGE_DIRECTION_OF_PLAY, orderReversed ? Direction.REVERSE : Direction.NORMAL);
+    server.getRoomOperations(GameConfig.GAME_ROOM).sendEvent(SocketEvent.MESSAGE, "Direction reversed!");
+  }
+
+  private void handleEight (SocketIOClient client) {
+    client.sendEvent(SocketEvent.GAME_CHOOSE_SUIT, new ArrayList<Card>(){{
+      add(new Card(CardSuit.CLUBS, CardValue.EIGHT, CardColor.BLACK, true));
+      add(new Card(CardSuit.SPADES, CardValue.EIGHT, CardColor.BLACK, true));
+      add(new Card(CardSuit.DIAMONDS, CardValue.EIGHT, CardColor.RED, true));
+      add(new Card(CardSuit.HEARTS, CardValue.EIGHT, CardColor.RED, true));
+    }});
+
+    log.info("request sent to player to choose suit");
+  }
 }
