@@ -126,6 +126,18 @@ public class StepDefinitions {
     playerAttemptPlayCard(id, cardValue, cardSuit, true);
   }
 
+  @When("from existing cards, player {int} plays {CardValue}-{CardSuit}")
+  public void playerPlayFromExistingCard (int id, String cardValue, String cardSuit) {
+    WebDriver driver = drivers.get(id);
+    WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
+
+    wait.until(ExpectedConditions.presenceOfElementLocated(USER_NAME_DISPLAY_TEXT));
+
+    By cardSelector = By.cssSelector("[data-testid='%s-%s-enabled']".formatted(cardValue, cardSuit));
+    wait.until(ExpectedConditions.presenceOfElementLocated(cardSelector));
+    driver.findElement(cardSelector).click();
+  }
+
   @When("player {int} has following cards:")
   public void playerHasCards (int id, List<String> cards) {
     ArrayList<Card> playerCards = new ArrayList<>(){{
