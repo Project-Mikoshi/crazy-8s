@@ -163,7 +163,12 @@ export default function (props: GameWindowProps) {
     case (GameState.STARTED): {
       return (
         <>
-          <SimpleDialog title='You have played a card that allows you to change the suit' isOpen={isModalOpen} onCancel={() => alert('you have to choose a suit')}>
+          <SimpleDialog
+            className='choose-suite-prompt'
+            title='You have played a card that allows you to change the suit'
+            isOpen={isModalOpen}
+            onCancel={() => alert('you have to choose a suit')}
+          >
             <Typography variant='h6' data-testid='modal-choose-suit-prompt'>Please Choose a Suit</Typography>
             <Stack sx={{ margin: '1rem', alignItems: 'center', flexDirection: 'column' }} spacing={1}>
               {cardChoices.map((card, index) => (

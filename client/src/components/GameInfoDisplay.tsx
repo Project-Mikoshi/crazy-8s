@@ -45,9 +45,9 @@ export default function (props: DeckDisplayProps) {
   // == Template =============================
   return (
     <Grid container spacing={2}>
-      <Grid item xs={4}>
-        <Box sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
-          <List subheader={<ListSubheader>Score Board</ListSubheader>}>
+      <Grid item xs={3}>
+        <Box sx={{ bgcolor: 'background.paper'  }}>
+          <List subheader={<ListSubheader>Score Board</ListSubheader>} disablePadding>
             {players.map(player => (
               <ListItem key={player.id}>
                 <ListItemIcon>
@@ -60,7 +60,13 @@ export default function (props: DeckDisplayProps) {
                 />
               </ListItem>
             ))}
+          </List>
+        </Box>
+      </Grid>
 
+      <Grid item xs={3}>
+        <Box sx={{ bgcolor: 'background.paper'  }}>
+          <List subheader={<ListSubheader>Game Status</ListSubheader>} disablePadding>
             <ListItem>
               <ListItemIcon>
                 {direction === Direction.NORMAL && <KeyboardDoubleArrowRightIcon />}
@@ -100,7 +106,7 @@ export default function (props: DeckDisplayProps) {
         </Box>
       </Grid>
 
-      <Grid item xs={8}>
+      <Grid item xs={6}>
         <Stack sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }} spacing={2}>
           <Divider flexItem>
             <Typography>Top of Discarded Pile</Typography>

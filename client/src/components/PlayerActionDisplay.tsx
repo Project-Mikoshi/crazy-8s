@@ -1,5 +1,4 @@
 import React from 'react'
-import { Scroll } from '@mikoshi/core-components'
 import { Fab, Grid, Stack, Tooltip, Typography } from '@mui/material'
 import HandIcon from '@mui/icons-material/AddRounded'
 import CardDisplay from './CardDisplay'
@@ -46,13 +45,11 @@ export default function (props: PlayerDisplayProps) {
       </Grid>
 
       <Grid item xs={10}>
-        <Scroll>
-          <Stack direction='row' sx={{ margin: '1rem', width: 'fit-content' }} spacing={1}>
-            {cards.map((card, index) => (
-              <CardDisplay disabled={!isPlaying} key={index} card={card} id={index} onSelect={onSelect}/>
-            ))}
-          </Stack>
-        </Scroll>
+        <Stack direction='row' sx={{ margin: '1rem' }} spacing={1}>
+          {cards.map((card, index) => (
+            <CardDisplay disabled={!isPlaying} key={index} card={card} id={index} onSelect={onSelect}/>
+          ))}
+        </Stack>
       </Grid>
 
       {isPlaying && isAbleToDraw && deckCount > 0 && (

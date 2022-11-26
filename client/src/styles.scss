@@ -18,9 +18,15 @@ body,
   }
 }
 
+.choose-suite-prompt {
+  .mikoshi-modal-content {
+    max-height: 100vh;
+  }
+}
+
 .card-display-svg {
-  height: 250px;
-  width: 200px;
+  height: 200px;
+  width: 150px;
   cursor: pointer;
 
   &.disabled {
