@@ -1,6 +1,7 @@
 package server;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Stack;
 import java.util.UUID;
@@ -117,6 +118,8 @@ public class GameModule {
     });
 
     server.getRoomOperations(GameConfig.GAME_ROOM).sendEvent(SocketEvent.GAME_UPDATE_PLAYERS_INFO, players.values());
+
+    checkForWinner();
   }
 
   public void updateCardsOnPlayersHand () {
@@ -225,6 +228,22 @@ public class GameModule {
     }
   }
 
+  private void checkForWinner () {
+    ArrayList<Player> sortedPlayer = new ArrayList<>(){{
+      addAll(players.values());
+    }};
+
+    Collections.sort(sortedPlayer);
+
+    Player playerWithHighestScore = sortedPlayer.get(0);
+    Player playerWithLowestScore = sortedPlayer.get(players.size() - 1);
+
+    if (playerWithHighestScore.getScore() >= GameConfig.SCORE_THRESHOLD) {
+      winner = playerWithLowestScore;
+      server.getRoomOperations(GameConfig.GAME_ROOM).sendEvent(SocketEvent.GAME_DECLARE_WINNER, winner);
+    }
+  }
+
   // == Event Handler ========================
   private DataListener<Card> playerDiscardCard () {
     return (client, cardToDiscard, ackSender) -> {
@@ -304,7 +323,11 @@ public class GameModule {
 
     if (player.getCardsHeld().isEmpty()) {
       endCurrentRound();
-      beginNewRound();
+
+      if (winner == null) {
+        beginNewRound();
+      }
+
       return;
     }
 
