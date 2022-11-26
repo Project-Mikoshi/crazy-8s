@@ -75,6 +75,8 @@ public class GameModule {
   public void reset () {
     players.clear();
     playerOrder.clear();
+    discardPile.clear();
+    deck.clear();
   }
 
   public void beginNewRound () {
@@ -113,9 +115,17 @@ public class GameModule {
 
   public void updateCardsOnPlayersHand () {
     players.forEach((id, player) -> {
-      player.getCardsHeld().forEach(card -> {
-        card.setIsPlayable(GameUtil.doesTwoCardsMatch(card, discardPile.peek()));
-      });
+      long count = player.getCardsHeld().stream().filter(card -> GameUtil.doesTwoCardsMatch(card, discardPile.peek())).count();
+  
+      if (player.getNumberOfCardsRequiredToPlayOrDraw() != 0 && count < GameConfig.DRAW_OR_PLAY_REQUIRED_FOR_CARD_TWO) {
+        player.getCardsHeld().forEach(card -> {
+          card.setIsPlayable(false);
+        });
+      } else {
+        player.getCardsHeld().forEach(card -> {
+          card.setIsPlayable(GameUtil.doesTwoCardsMatch(card, discardPile.peek()));
+        });
+      }
 
       server.getClient(id).sendEvent(SocketEvent.GAME_UPDATE_CARDS, player.getCardsHeld());
     });
@@ -139,7 +149,11 @@ public class GameModule {
   private void drawFirstCardForDiscardPle () {
     Card card = drawCardFromDeck();
 
-    while (card.getValue().equals(CardValue.EIGHT)) {
+    while (card.getValue().equals(CardValue.EIGHT)
+      || card.getValue().equals(CardValue.TWO)
+      || card.getValue().equals(CardValue.QUEEN)
+      || card.getValue().equals(CardValue.A)    
+    ) {
       int insertIndex = (int) Math.floor(Math.random() * deck.size());
       deck.add(insertIndex, card);
 
@@ -182,6 +196,7 @@ public class GameModule {
 
   private void endPlayerTurn () {
     Player player = players.get(currentPlayer);
+    player.setNumberOfCardsRequiredToPlayOrDraw(0);
     server.getClient(currentPlayer).sendEvent(SocketEvent.GAME_END_PLAYER_TURN);
     server.getRoomOperations(GameConfig.GAME_ROOM).sendEvent(SocketEvent.MESSAGE, "%s has finished playing".formatted(player.getName()));
 
@@ -217,7 +232,11 @@ public class GameModule {
       client.sendEvent(SocketEvent.MESSAGE, "You have discarded a %s".formatted(cardToDiscard));
       client.sendEvent(SocketEvent.GAME_UPDATE_CARDS, player.getCardsHeld());
 
-      if (cardToDiscard.getValue().equals(CardValue.EIGHT)) {
+      if (player.getDiscardCardCount() < player.getNumberOfCardsRequiredToPlayOrDraw()) {
+        handleTwoDuringPlayForDiscard(player, client);
+      } else if (player.getNumberOfCardsRequiredToPlayOrDraw() == 0 && cardToDiscard.getValue().equals(CardValue.TWO)) {
+        handleTwoWhenDiscard(cardToDiscard);
+      } else if (cardToDiscard.getValue().equals(CardValue.EIGHT)) {
         handleEight(client);
       } else {
         discardPile.push(cardToDiscard);
@@ -236,21 +255,26 @@ public class GameModule {
       Player player = players.get(playerId);
 
       Card card = drawCardFromDeck();
-      card.setIsPlayable(GameUtil.doesTwoCardsMatch(card, discardPile.peek()));
-      log.info("{} draw {} from card deck", player.getName(), card);
 
-      player.getCardsHeld().add(card);
-      player.setDrawnCardCount(player.getDrawnCardCount() + 1);
-
-      if (GameUtil.shouldDrawAbilityBeDisabled(player, card, discardPile.peek())) {
-        client.sendEvent(SocketEvent.GAME_TOGGLE_PLAYER_DRAW_CARD_ABILITY, false);
+      if (discardPile.peek().getValue().equals(CardValue.TWO) && player.getNumberOfCardsRequiredToPlayOrDraw() != 0) {
+        handleTwoDuringPlayForDraw(player, client, card);
+      } else {
+        card.setIsPlayable(GameUtil.doesTwoCardsMatch(card, discardPile.peek()));
+        log.info("{} draw {} from card deck", player.getName(), card);
+  
+        player.getCardsHeld().add(card);
+        player.setDrawnCardCount(player.getDrawnCardCount() + 1);
+  
+        if (GameUtil.shouldDrawAbilityBeDisabled(player, card, discardPile.peek())) {
+          client.sendEvent(SocketEvent.GAME_TOGGLE_PLAYER_DRAW_CARD_ABILITY, false);
+        }
+  
+        client.sendEvent(SocketEvent.GAME_UPDATE_CARDS, player.getCardsHeld());
+        client.sendEvent(SocketEvent.MESSAGE, "You have drawn a %s".formatted(card));
+        server.getRoomOperations(GameConfig.GAME_ROOM).sendEvent(SocketEvent.GAME_UPDATE_REMAINING_DECK, deck.size());
+  
+        handlePostPlayerActions();
       }
-
-      client.sendEvent(SocketEvent.GAME_UPDATE_CARDS, player.getCardsHeld());
-      client.sendEvent(SocketEvent.MESSAGE, "You have drawn a %s".formatted(card));
-      server.getRoomOperations(GameConfig.GAME_ROOM).sendEvent(SocketEvent.GAME_UPDATE_REMAINING_DECK, deck.size());
-
-      handlePostPlayerActions();
     };
   }
 
@@ -283,6 +307,13 @@ public class GameModule {
       beginNewRound();
       return;
     }
+
+    if (deck.isEmpty() && !GameUtil.playerHasPlayableCards(player)) {
+      endPlayerTurn();
+      moveToNextPlayer();
+      promptPlayerToStart();
+      return;
+    }
     
     if (player.getDrawnCardCount() >= GameConfig.MAX_DRAW_PER_TURN && !GameUtil.playerHasPlayableCards(player)) {
       endPlayerTurn();
@@ -291,7 +322,7 @@ public class GameModule {
       return;
     }
 
-    if (player.getDiscardCardCount() == 1) {
+    if (player.getDiscardCardCount() != 0) {
       endPlayerTurn();
       moveToNextPlayer();
       promptPlayerToStart();
@@ -320,5 +351,65 @@ public class GameModule {
     }});
 
     log.info("request sent to player to choose suit");
+  }
+
+  private void handleTwoWhenDiscard (Card cardToDiscard) {
+    Card previousTopOfDiscardPile = discardPile.peek();
+
+    discardPile.push(cardToDiscard);
+    server.getRoomOperations(GameConfig.GAME_ROOM).sendEvent(SocketEvent.GAME_UPDATE_DISCARD_PILE, cardToDiscard);
+    server.getRoomOperations(GameConfig.GAME_ROOM).sendEvent(SocketEvent.GAME_UPDATE_REMAINING_DECK, deck.size());
+
+    updateCardsOnPlayersHand();
+    endPlayerTurn();
+    moveToNextPlayer();
+
+    Player player = players.get(currentPlayer);
+    if (previousTopOfDiscardPile.getValue().equals(CardValue.TWO) && cardToDiscard.getValue().equals(CardValue.TWO)) {
+      player.setNumberOfCardsRequiredToPlayOrDraw(GameConfig.DRAW_OR_PLAY_REQUIRED_FOR_CARD_TWO * 2);
+    } else {
+      player.setNumberOfCardsRequiredToPlayOrDraw(GameConfig.DRAW_OR_PLAY_REQUIRED_FOR_CARD_TWO);
+    }
+
+    promptPlayerToStart();
+  }
+
+  private void handleTwoDuringPlayForDiscard (Player player, SocketIOClient client) {
+    int numberOfRemainingCard = player.getNumberOfCardsRequiredToPlayOrDraw() - player.getDiscardCardCount();
+
+    if (numberOfRemainingCard == 0) {
+      player.setNumberOfCardsRequiredToPlayOrDraw(0);
+    }
+
+    client.sendEvent(SocketEvent.MESSAGE, "You still need to discard %d card".formatted(numberOfRemainingCard));
+    client.sendEvent(SocketEvent.GAME_UPDATE_CARDS, player.getCardsHeld());
+  }
+
+  private void handleTwoDuringPlayForDraw (Player player, SocketIOClient client, Card cardDrawn) {
+    player.setDrawnCardCount(player.getDrawnCardCount() + 1);
+
+    int numberOfRemainingCard = player.getNumberOfCardsRequiredToPlayOrDraw() - player.getDrawnCardCount();
+
+    if (numberOfRemainingCard > 0) {
+      client.sendEvent(SocketEvent.MESSAGE, "You still need to draw %d card".formatted(numberOfRemainingCard));
+      cardDrawn.setIsPlayable(false);
+    } else {
+      if (numberOfRemainingCard == 0) {
+        player.setDrawnCardCount(0);
+        player.setNumberOfCardsRequiredToPlayOrDraw(0);
+        updateCardsOnPlayersHand();
+      }
+
+      cardDrawn.setIsPlayable(GameUtil.doesTwoCardsMatch(cardDrawn, discardPile.peek()));
+    }
+
+
+    log.info("{} draw {} from card deck", player.getName(), cardDrawn);
+    player.getCardsHeld().add(cardDrawn);
+    client.sendEvent(SocketEvent.GAME_UPDATE_CARDS, player.getCardsHeld());
+    client.sendEvent(SocketEvent.MESSAGE, "You have drawn a %s".formatted(cardDrawn));
+    server.getRoomOperations(GameConfig.GAME_ROOM).sendEvent(SocketEvent.GAME_UPDATE_REMAINING_DECK, deck.size());
+
+    client.sendEvent(SocketEvent.GAME_UPDATE_CARDS, player.getCardsHeld());
   }
 }

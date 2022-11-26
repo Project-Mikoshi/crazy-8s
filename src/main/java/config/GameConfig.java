@@ -17,6 +17,8 @@ public class GameConfig {
 
   public static final int MAX_DRAW_PER_TURN = 3;
 
+  public static final int DRAW_OR_PLAY_REQUIRED_FOR_CARD_TWO = 2;
+
   public static final String GAME_ROOM = "crazy 8s";
 
   public static final String[] CARD_SUITS = {
