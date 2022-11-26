@@ -69,3 +69,15 @@ Feature: playing-two
     And from existing cards, player 3 plays 6-H
     Then player 3 turn ended
     Then top of discard pile is now 6-H
+
+  Scenario: 72
+    Given top card is 7-C
+    When player 1 try to play 2-C with success
+    Then top of discard pile is now 2-C
+    And player 2 has following cards:
+      |4-C|
+      |6-C|
+      |9-D|
+    And from existing cards, player 2 plays 4-C
+    And from existing cards, player 2 plays 6-C
+    Then player 2 turn ended
