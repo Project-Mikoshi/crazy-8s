@@ -58,7 +58,7 @@ Feature: card-playability
     When player 1 try to play 8-H with success
     Then player 1 is prompted to chose a suit
 
-  Scenario: 62
+  Scenario: 63
     Given top card is 7-C
     When player 1 has following cards:
       |3-C|
