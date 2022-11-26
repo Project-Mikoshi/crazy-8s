@@ -43,6 +43,7 @@ public class StepDefinitions {
   private static final By MODAL_CHOOSE_SUIT_PROMPT = By.cssSelector("[data-testid='modal-choose-suit-prompt'");
   private static final By GAME_STATUS_DIRECTION = By.cssSelector("[data-testid='game-status-direction'");
   private static final By GAME_STATUS_ROUND = By.cssSelector("[data-testid='game-status-round'");
+  private static final By GAME_STATUS_WINNER = By.cssSelector("[data-testid='game-status-winner'");
 
   // == Props ================================
   @Autowired GameModule game;
@@ -247,6 +248,26 @@ public class StepDefinitions {
     drivers.forEach((id, driver) -> {
       WebElement roundNumber = driver.findElement(GAME_STATUS_ROUND);
       Assertions.assertTrue(roundNumber.getText().equalsIgnoreCase(String.valueOf(round)));
+    });
+  }
+
+  @Then("player {int} scores is {int}")
+  public void checkScores(int id, int score) {
+    WebDriver driver = drivers.get(id);
+    UUID playerId = playerIds.get(id);
+
+    WebElement scoreText = driver.findElement(By.cssSelector("[data-testid='player-score-%s'".formatted(playerId.toString())));
+    Assertions.assertTrue(scoreText.getText().equalsIgnoreCase(String.valueOf(score)));
+  }
+
+  @Then("game is over with player {int} being the winner")
+  public void checkGameOver (int id) {
+    UUID playerId = playerIds.get(id);
+    String winnerName = game.getPlayers().get(playerId).getName();
+    
+    drivers.forEach((driverId, driver) -> {
+      WebElement winner = driver.findElement(GAME_STATUS_WINNER);
+      Assertions.assertTrue(winner.getText().equalsIgnoreCase(winnerName));
     });
   }
 }
