@@ -121,7 +121,7 @@ public class GameModule {
     });
   }
 
-  // == Private Method =======================
+  // == Actions ==============================
   private void dealCardsToPlayer () {
     players.forEach((id, player) -> {
       ArrayList<Card> cards = new ArrayList<>(){{
