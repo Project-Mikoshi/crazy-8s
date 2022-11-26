@@ -89,6 +89,11 @@ public class StepDefinitions {
   @Given("top card is {CardValue}-{CardSuit}")
   public void changeCardOnTopOfDiscardedPile (String cardValue, String cardSuit) {
     game.getDiscardPile().push(new Card(cardSuit, cardValue, CardColor.BLACK, false));
+    try {
+      Thread.sleep(500);
+    } catch (InterruptedException e) {
+      e.printStackTrace();
+    }
   }
 
   // == Step Defs - When =====================
@@ -157,6 +162,12 @@ public class StepDefinitions {
 
     game.getPlayers().get(playerId).setCardsHeld(playerCards);
     game.updateCardsOnPlayersHand();
+
+    try {
+      Thread.sleep(500);
+    } catch (InterruptedException e) {
+      e.printStackTrace();
+    }
   }
   
   @When("player {int} draw and get {CardValue}-{CardSuit}")
@@ -184,6 +195,18 @@ public class StepDefinitions {
         put(id, game.getPlayerOrder().get(id - 1));
       });
     }};
+  }
+
+  @And("player {int} choose {CardValue}-{CardSuit} from the prompt")
+  public void chooseSuit (int id, String cardValue, String cardSuit) {
+    WebDriver driver = drivers.get(id);
+    WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
+
+    wait.until(ExpectedConditions.presenceOfElementLocated(USER_NAME_DISPLAY_TEXT));
+
+    By cardSelector = By.cssSelector("[data-testid='%s-%s-enabled']".formatted(cardValue, cardSuit));
+    wait.until(ExpectedConditions.presenceOfElementLocated(cardSelector));
+    driver.findElement(cardSelector).click();
   }
 
   // == Step Defs - Then =====================
@@ -239,6 +262,12 @@ public class StepDefinitions {
   @Then("player {int} turn ended")
   public void checkPlayerTurnEnded (int id) {
     WebDriver driver = drivers.get(id);
+
+    try {
+      Thread.sleep(500);
+    } catch (InterruptedException e) {
+      e.printStackTrace();
+    }
 
     Assertions.assertNotNull(driver.findElement(USER_STATUS_WAITING));
   }
