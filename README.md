@@ -23,8 +23,14 @@ after server has been started, visit localhost:8080 to check out the the web pag
 
 ## How to run all tests
 
-```md
+```bash
 mvn test
+```
+
+## Log
+
+```md
+acceptance testing takes a long time and may occasionally fail due to uncertain race conditions, there's a log.txt file under the root directory to show test cases does pass in one shot 
 ```
 
 ## Project Structure
