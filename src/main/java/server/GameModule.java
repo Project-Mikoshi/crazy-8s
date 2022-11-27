@@ -415,13 +415,14 @@ public class GameModule {
 
   private void handleTwoDuringPlayForDiscard (Player player, SocketIOClient client) {
     int numberOfRemainingCard = player.getNumberOfCardsRequiredToPlayOrDraw() - player.getDiscardCardCount();
+    client.sendEvent(SocketEvent.GAME_UPDATE_CARDS, player.getCardsHeld());
 
     if (numberOfRemainingCard == 0) {
       player.setNumberOfCardsRequiredToPlayOrDraw(0);
+      handlePostPlayerActions();
     }
 
     client.sendEvent(SocketEvent.MESSAGE, "You still need to discard %d card".formatted(numberOfRemainingCard));
-    client.sendEvent(SocketEvent.GAME_UPDATE_CARDS, player.getCardsHeld());
   }
 
   private void handleTwoDuringPlayForDraw (Player player, SocketIOClient client, Card cardDrawn) {
