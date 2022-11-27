@@ -84,7 +84,10 @@ Feature: playing-two
 
   Scenario: 73
     Given top card is 7-C
-    When player 1 try to play 2-C with success
+    And player 1 has following cards:
+      |A-C|
+      |2-C|
+    And from existing cards, player 1 plays 2-C
     Then top of discard pile is now 2-C
     And player 2 has following cards:
       |4-C|
