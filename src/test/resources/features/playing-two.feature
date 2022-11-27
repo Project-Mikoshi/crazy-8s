@@ -91,5 +91,5 @@ Feature: playing-two
       |6-C|
     And from existing cards, player 2 plays 4-C
     And from existing cards, player 2 plays 6-C
-    Then player 2 turn ended
     Then game round advanced to 2
+    Then next player is player 2

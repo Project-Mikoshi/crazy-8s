@@ -114,10 +114,22 @@ public class StepDefinitions {
     }});
     game.updateCardsOnPlayersHand();
 
+    try {
+      Thread.sleep(500);
+    } catch (InterruptedException e) {
+      e.printStackTrace();
+    }
+
     if (isSuccessful) {
       By cardSelector = By.cssSelector("[data-testid='%s-%s-enabled']".formatted(cardValue, cardSuit));
       wait.until(ExpectedConditions.presenceOfElementLocated(cardSelector));
       driver.findElement(cardSelector).click();
+
+      try {
+        Thread.sleep(500);
+      } catch (InterruptedException e) {
+        e.printStackTrace();
+      }
 
       if (!cardValue.equalsIgnoreCase(CardValue.EIGHT)) {
         wait.until(ExpectedConditions.presenceOfElementLocated(USER_STATUS_WAITING));
@@ -145,6 +157,12 @@ public class StepDefinitions {
     By cardSelector = By.cssSelector("[data-testid='%s-%s-enabled']".formatted(cardValue, cardSuit));
     wait.until(ExpectedConditions.presenceOfElementLocated(cardSelector));
     driver.findElement(cardSelector).click();
+
+    try {
+      Thread.sleep(500);
+    } catch (InterruptedException e) {
+      e.printStackTrace();
+    }
   }
 
   @When("player {int} has following cards:")
@@ -207,6 +225,12 @@ public class StepDefinitions {
     By cardSelector = By.cssSelector("[data-testid='%s-%s-enabled']".formatted(cardValue, cardSuit));
     wait.until(ExpectedConditions.presenceOfElementLocated(cardSelector));
     driver.findElement(cardSelector).click();
+
+    try {
+      Thread.sleep(500);
+    } catch (InterruptedException e) {
+      e.printStackTrace();
+    }
   }
 
   // == Step Defs - Then =====================
@@ -274,6 +298,12 @@ public class StepDefinitions {
 
   @Then("game round advanced to {int}")
   public void checkGameRound (int round) {
+    try {
+      Thread.sleep(500);
+    } catch (InterruptedException e) {
+      e.printStackTrace();
+    }
+
     drivers.forEach((id, driver) -> {
       WebElement roundNumber = driver.findElement(GAME_STATUS_ROUND);
       Assertions.assertTrue(roundNumber.getText().equalsIgnoreCase(String.valueOf(round)));
