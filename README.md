@@ -10,7 +10,8 @@ Anthony Y. Zhu
 ## How to start server
 
 ```bash
-mvn clean install
+mvn clean
+mvn mvn compile
 mvn spring-boot:run
 ```
 
