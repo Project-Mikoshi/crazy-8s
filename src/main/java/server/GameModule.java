@@ -81,6 +81,9 @@ public class GameModule {
     discardPile.clear();
     deck.clear();
     roundNumber = 0;
+    winner = null;
+    currentPlayer = null;
+    orderReversed = false;
   }
 
   public void beginNewRound () {
