@@ -6,8 +6,8 @@ Feature: card-playability
 
   Scenario: 51
     Given top card is K-C
-    When player 1 try to play 3-C with success
-    Then top of discard pile is now 3-C
+    When player 1 try to play K-H with success
+    Then top of discard pile is now K-H
 
   Scenario: 52
     Given top card is K-C
