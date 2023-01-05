@@ -1,12 +1,3 @@
-# Crazy 8s
-
-## Authors
-
-```md
-Anthony Y. Zhu
-101128194
-```
-
 ## How to start server
 
 ```bash
